@@ -1,0 +1,73 @@
+# =============================================
+# Deploy parlox.cc to Namecheap via FTPS
+# Triggers on push to main, also runnable manually
+# from the Actions tab (workflow_dispatch).
+#
+# Required repository secrets:
+#   FTP_HOST      e.g. ftp.parlox.cc
+#   FTP_USER      e.g. github@parlox.cc
+#   FTP_PASSWORD  the password for the dedicated FTP user
+#
+# The FTP user must be scoped (in cPanel) to the directory
+# that should serve as parlox.cc's site root. The action
+# uploads to that user's home directory.
+# =============================================
+
+name: Deploy to Namecheap
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Don't cancel an in-flight deploy mid-transfer (would leave the
+# server in a half-uploaded state). Queue subsequent runs instead.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: FTPS sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          local-dir: ./
+          server-dir: ./
+          # Incremental: action keeps a state file on the server with
+          # hashes; only changed files are re-uploaded on each run.
+          state-name: .ftp-deploy-sync-state.json
+          # Don't upload repo/dev files. Site assets only.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github
+            **/.github/**
+            **/README.md
+            **/LICENSE
+            **/.gitignore
+            **/_local/**
+            **/_drafts/**
+            **/_notes/**
+            **/_context/**
+            **/notes/**
+            **/drafts/**
+            **/*.local.*
+            **/*.draft.*
+            **/.DS_Store
+            **/Thumbs.db
+            **/node_modules/**
+            **/.env*
+            **/.vscode/**
+            **/.idea/**
