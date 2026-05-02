@@ -1,0 +1,704 @@
+/* =========================================================
+   parlox.cc — style for both large and small screens
+   Editorial directory with hover-accordion (desktop) and
+   business-card stack (mobile). Quiet, modern, brand-as-accent.
+   ========================================================= */
+
+/* ---------- Modern reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.55;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+ul {
+  list-style: none;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- Tokens ---------- */
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4.5rem;
+
+  --fs-xs: clamp(0.7rem, 0.65rem + 0.2vw, 0.8rem);
+  --fs-sm: clamp(0.875rem, 0.83rem + 0.2vw, 1rem);
+  --fs-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --fs-md: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+  --fs-lg: clamp(1.5rem, 1.25rem + 1.2vw, 1.875rem);
+  --fs-xl: clamp(1.875rem, 1.5rem + 1.8vw, 2.5rem);
+
+  /* Light palette */
+  --bg: #fbfbfa;
+  --bg-elev: #ffffff;
+  --bg-elev-2: #f4f4f3;
+  --fg: #0f0f10;
+  --fg-muted: #5e5e66;
+  --fg-soft: #8a8a92;
+  --line: rgba(15, 15, 16, 0.09);
+  --line-strong: rgba(15, 15, 16, 0.18);
+  --focus: #2563eb;
+  --heart: #e11d48;
+
+  --radius: 14px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 180ms;
+  --dur: 320ms;
+
+  --container: 80rem;
+  --topbar-h: clamp(56px, 7vh, 72px);
+  --bottombar-h: clamp(48px, 6vh, 56px);
+
+  /* Mobile wallet stack tab height */
+  --tab-h-mobile: 64px;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+/* OS-driven dark when user hasn't picked. */
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="auto"] {
+    --bg: #0b0b0d;
+    --bg-elev: #131316;
+    --bg-elev-2: #1a1a1e;
+    --fg: #f4f4f5;
+    --fg-muted: #a8a8b0;
+    --fg-soft: #6f6f78;
+    --line: rgba(244, 244, 245, 0.1);
+    --line-strong: rgba(244, 244, 245, 0.22);
+    --focus: #60a5fa;
+    --heart: #fb7185;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b0b0d;
+  --bg-elev: #131316;
+  --bg-elev-2: #1a1a1e;
+  --fg: #f4f4f5;
+  --fg-muted: #a8a8b0;
+  --fg-soft: #6f6f78;
+  --line: rgba(244, 244, 245, 0.1);
+  --line-strong: rgba(244, 244, 245, 0.22);
+  --focus: #60a5fa;
+  --heart: #fb7185;
+}
+:root[data-theme="light"] {
+  --bg: #fbfbfa;
+  --bg-elev: #ffffff;
+  --bg-elev-2: #f4f4f3;
+  --fg: #0f0f10;
+  --fg-muted: #5e5e66;
+  --fg-soft: #8a8a92;
+  --line: rgba(15, 15, 16, 0.09);
+  --line-strong: rgba(15, 15, 16, 0.18);
+  --focus: #2563eb;
+}
+
+/* ---------- Globals ---------- */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--space-4);
+  background: var(--bg-elev);
+  color: var(--fg);
+  padding: var(--space-2) var(--space-4);
+  border-radius: 6px;
+  z-index: 1000;
+  transition: top var(--dur) var(--ease);
+}
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+/* ---------- Topbar ---------- */
+.topbar {
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: saturate(140%) blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+@media (min-width: 768px) {
+  .topbar {
+    padding: 0 var(--space-6);
+  }
+}
+
+.mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: var(--fs-md);
+  padding: var(--space-2);
+  margin: calc(var(--space-2) * -1);
+}
+.mark-handle {
+  font-variant-numeric: tabular-nums;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 var(--space-4);
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: var(--fs-sm);
+  transition: background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.btn:hover {
+  background: var(--line);
+}
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--fg);
+  color: var(--bg);
+  gap: 0.5rem;
+}
+.btn-primary:hover {
+  background: var(--fg);
+  filter: brightness(1.12);
+}
+.wa-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  width: 44px;
+  padding: 0;
+}
+.btn-icon .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-sun,
+.icon-moon,
+.icon-auto {
+  display: none;
+}
+:root[data-theme="auto"] .icon-auto {
+  display: block;
+}
+:root[data-theme="light"] .icon-moon {
+  display: block;
+}
+:root[data-theme="dark"] .icon-sun {
+  display: block;
+}
+
+.btn-lang {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.05em;
+  min-width: 44px;
+  padding: 0 var(--space-3);
+}
+
+/* ---------- Page layout ----------
+   Body is column-flex (topbar / main / footer).
+   .page itself is column-flex so the directory can grow to fill
+   the remaining vertical space — that's how we get the 5 strips
+   to fill the laptop viewport on first paint. */
+.page {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+}
+@media (min-width: 768px) {
+  .page {
+    padding: var(--space-6) var(--space-6);
+    gap: var(--space-5);
+  }
+}
+
+/* ---------- Byline (name in flow) ---------- */
+.byline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.byline-name {
+  font-size: var(--fs-md);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.byline-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+  line-height: 1.4;
+}
+.byline-handle {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.byline-sep {
+  color: var(--fg-soft);
+}
+.byline-email {
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease);
+}
+.byline-email:hover,
+.byline-email:focus-visible {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Directory ---------- */
+.directory {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+}
+
+/* ====================================================
+   MOBILE — Wallet / business-card stack (default)
+   ====================================================
+   Each card is absolutely positioned and full-width.
+   Default position for card[i]: translateY(i * tabH).
+   Only the top --tab-h of each card peeks above the next.
+   When card[k] is active:
+     cards [0..k-1] keep i * tabH       (their tabs)
+     card[k]        keeps k * tabH      (its tab + content fills)
+     cards [k+1..n] shift down by --content-h
+   --content-h is computed in JS from the container size.
+   ==================================================== */
+.panels {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: calc(5 * var(--tab-h-mobile) + 280px);
+}
+
+.panel {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--brand, var(--fg));
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -10px 30px -16px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  transform: translateY(var(--y, 0px));
+  transition: transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+  will-change: transform;
+  /* Cards fade in with a subtle stagger on first paint. */
+  animation: card-in 460ms var(--ease) both;
+}
+.panel:nth-child(1) { animation-delay: 40ms; }
+.panel:nth-child(2) { animation-delay: 90ms; }
+.panel:nth-child(3) { animation-delay: 140ms; }
+.panel:nth-child(4) { animation-delay: 190ms; }
+.panel:nth-child(5) { animation-delay: 240ms; }
+
+.panel.is-active {
+  box-shadow: 0 -16px 40px -16px rgba(0, 0, 0, 0.28);
+}
+
+.panel-tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: var(--tab-h-mobile);
+  padding: 0 var(--space-5);
+  text-align: left;
+  color: inherit;
+}
+.panel-area {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand, var(--fg));
+}
+
+/* "+" toggle that becomes "×" when active. Drawn with two pseudo
+   elements so it scales crisply at any size. */
+.panel-toggle {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--fg-soft);
+  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.panel-toggle::before,
+.panel-toggle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: currentColor;
+  border-radius: 1px;
+}
+.panel-toggle::before {
+  width: 100%;
+  height: 1.5px;
+}
+.panel-toggle::after {
+  width: 1.5px;
+  height: 100%;
+  transition: transform var(--dur) var(--ease);
+}
+.panel.is-active .panel-toggle {
+  transform: rotate(45deg);
+  color: var(--brand, var(--fg));
+}
+
+.panel-content {
+  position: absolute;
+  top: var(--tab-h-mobile);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.panel.is-active .panel-content {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 100ms;
+}
+
+.panel-kicker {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brand, var(--fg-muted));
+  max-width: 32ch;
+}
+.panel-brand {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--fg);
+}
+.panel-slogan {
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+  max-width: 38ch;
+  flex: 1;
+}
+.panel-link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--brand, var(--fg));
+  padding: var(--space-2) 0;
+  min-height: 44px;
+}
+.panel-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ====================================================
+   DESKTOP — Horizontal accordion (≥ 768px)
+   ====================================================
+   - Panels are flex children, not absolute.
+   - Default flex-grow: 1 → equal fifths.
+   - Hovered/focused panel: flex-grow: 4 → 4/(4+1+1+1+1)=50%.
+   - Vertical area name shows when collapsed.
+   - On expand: vertical text fades, content fades in
+     bottom-aligned with kicker/brand/slogan/link stack.
+   ==================================================== */
+@media (min-width: 768px) {
+  .directory {
+    height: 100%;
+  }
+
+  .panels {
+    flex-direction: row;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: clamp(360px, 60dvh, 640px);
+    gap: var(--space-3);
+  }
+
+  .panel {
+    position: relative;
+    inset: auto;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    border: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: none;
+    transform: none;
+    transition: flex-grow var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  /* Brand color as a 4px bottom band — quiet identification per panel. */
+  .panel::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: var(--brand, transparent);
+    transition: height var(--dur) var(--ease);
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+
+  .panel-tab {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-5) var(--space-3);
+    background: transparent;
+  }
+  .panel-toggle {
+    display: none;
+  }
+  .panel-area {
+    /* Vertical text — reads bottom→top, conventional. Sized to fill
+       the strip with presence without crowding it. */
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-align: center;
+    transition: opacity var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+
+  .panel-content {
+    position: absolute;
+    inset: 0;
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    opacity: 0;
+    transform: none;
+    pointer-events: none;
+    transition: opacity var(--dur) var(--ease);
+  }
+  .panel-slogan {
+    flex: none;
+    max-width: 28ch;
+  }
+  .panel-link {
+    margin-top: var(--space-2);
+  }
+
+  /* Expand on hover, keyboard focus, or programmatic activation. */
+  .panel:hover,
+  .panel:focus-within,
+  .panel.is-active {
+    flex-grow: 4;
+    border-color: var(--line-strong);
+    box-shadow: 0 8px 28px -16px rgba(0, 0, 0, 0.22);
+  }
+  .panel:hover::after,
+  .panel:focus-within::after,
+  .panel.is-active::after {
+    height: 6px;
+  }
+  .panel:hover .panel-area,
+  .panel:focus-within .panel-area,
+  .panel.is-active .panel-area {
+    opacity: 0;
+    transform: rotate(180deg) translateY(-12px);
+  }
+  .panel:hover .panel-content,
+  .panel:focus-within .panel-content,
+  .panel.is-active .panel-content {
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 120ms;
+  }
+}
+
+/* ---------- Bottombar ---------- */
+.bottombar {
+  min-height: var(--bottombar-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  padding: var(--space-2) var(--space-4);
+  text-align: center;
+}
+.bottombar-text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em 0.55em;
+  line-height: 1.5;
+}
+.bb-segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  white-space: nowrap;
+}
+.bb-sep {
+  color: var(--fg-soft);
+}
+.bb-handle {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+.bb-link {
+  color: var(--fg);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--line-strong);
+  padding-bottom: 1px;
+  transition: color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+.bb-link:hover,
+.bb-link:focus-visible {
+  color: var(--focus);
+  border-color: currentColor;
+}
+.footer-heart {
+  width: 0.95em;
+  height: 0.95em;
+  color: var(--heart);
+  flex-shrink: 0;
+  transform: translateY(-1px);
+}
+
+/* ---------- Motion ---------- */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--y, 0px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(var(--y, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+}

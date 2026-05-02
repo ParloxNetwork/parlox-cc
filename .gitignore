@@ -1,0 +1,90 @@
+# =============================================
+# parlox.cc — .gitignore
+# Static site (HTML/CSS/JS, no build step).
+# =============================================
+
+# ---------- OS ----------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ---------- Editors / IDEs ----------
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.history/
+
+# ---------- Dependencies (in case you ever add npm/yarn/pnpm) ----------
+node_modules/
+.pnp/
+.pnp.js
+package-lock.json.lock
+yarn-error.log
+yarn-debug.log*
+
+# ---------- Build / cache (in case you add tooling later) ----------
+dist/
+build/
+out/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+.vite/
+
+# ---------- Env / secrets ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# ---------- Logs ----------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ---------- Deploy platforms ----------
+.vercel/
+.netlify/
+.firebase/
+.wrangler/
+.cloudflare/
+
+# ---------- Personal / local context ----------
+# Drop drafts, notes, AI exports, references, etc. into any of these
+# folders or with these suffixes — git won't track them.
+_local/
+_drafts/
+_notes/
+_context/
+notes/
+drafts/
+*.local.md
+*.local.txt
+*.draft.md
+TODO.local.md
+
+# ---------- Misc ----------
+*.tmp
+*.bak
+*.orig
+*.rej
+.tmp/
