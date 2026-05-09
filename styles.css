@@ -1,7 +1,8 @@
 /* =========================================================
-   parlox.cc — style for both large and small screens
-   Editorial directory with hover-accordion (desktop) and
-   business-card stack (mobile). Quiet, modern, brand-as-accent.
+   parlox.cc — editorial directory
+   Fraunces (display) + DM Sans (body) on warm cream/black
+   with paper grain. Hover-accordion (desktop) and wallet
+   stack (mobile). Brand-as-accent per panel.
    ========================================================= */
 
 /* ---------- Modern reset ---------- */
@@ -18,15 +19,12 @@ html,
 body {
   height: 100%;
 }
-body {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  line-height: 1.55;
+ul {
+  list-style: none;
 }
-img,
-svg {
-  display: block;
-  max-width: 100%;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 button {
   font: inherit;
@@ -35,12 +33,10 @@ button {
   border: 0;
   cursor: pointer;
 }
-ul {
-  list-style: none;
-}
-a {
-  color: inherit;
-  text-decoration: none;
+svg,
+img {
+  display: block;
+  max-width: 100%;
 }
 
 /* ---------- Tokens ---------- */
@@ -52,91 +48,144 @@ a {
   --space-5: 1.5rem;
   --space-6: 2rem;
   --space-8: 3rem;
-  --space-10: 4.5rem;
 
-  --fs-xs: clamp(0.7rem, 0.65rem + 0.2vw, 0.8rem);
+  --fs-xs: clamp(0.7rem, 0.66rem + 0.18vw, 0.8rem);
   --fs-sm: clamp(0.875rem, 0.83rem + 0.2vw, 1rem);
   --fs-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
   --fs-md: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
-  --fs-lg: clamp(1.5rem, 1.25rem + 1.2vw, 1.875rem);
-  --fs-xl: clamp(1.875rem, 1.5rem + 1.8vw, 2.5rem);
+  --fs-lg: clamp(1.5rem, 1.2rem + 1.4vw, 2rem);
+  --fs-xl: clamp(2rem, 1.5rem + 2.4vw, 3rem);
 
-  /* Light palette */
-  --bg: #fbfbfa;
-  --bg-elev: #ffffff;
-  --bg-elev-2: #f4f4f3;
-  --fg: #0f0f10;
-  --fg-muted: #5e5e66;
-  --fg-soft: #8a8a92;
-  --line: rgba(15, 15, 16, 0.09);
-  --line-strong: rgba(15, 15, 16, 0.18);
-  --focus: #2563eb;
-  --heart: #e11d48;
+  /* Warm paper palette */
+  --bg: #f5f1e8;
+  --bg-elev: #fbf8f1;
+  --bg-elev-2: #ece6d8;
+  --fg: #1a1612;
+  --fg-muted: #6e6258;
+  --fg-soft: #a39c8e;
+  --line: rgba(26, 22, 18, 0.10);
+  --line-strong: rgba(26, 22, 18, 0.22);
+  --focus: #b85228;
+  --heart: #c1413f;
+
+  --grain-blend: multiply;
+  --grain-opacity: 0.08;
 
   --radius: 14px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --dur-fast: 180ms;
-  --dur: 320ms;
+  --dur: 380ms;
 
-  --container: 80rem;
-  --topbar-h: clamp(56px, 7vh, 72px);
+  --container: 84rem;
+  --topbar-h: clamp(60px, 7vh, 76px);
   --bottombar-h: clamp(48px, 6vh, 56px);
 
   /* Mobile wallet stack tab height */
-  --tab-h-mobile: 64px;
+  --tab-h-mobile: 68px;
 
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+  --font-display: "Fraunces", "Times New Roman", Georgia, serif;
+  --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
 }
 
 /* OS-driven dark when user hasn't picked. */
 @media (prefers-color-scheme: dark) {
   :root[data-theme="auto"] {
-    --bg: #0b0b0d;
-    --bg-elev: #131316;
-    --bg-elev-2: #1a1a1e;
-    --fg: #f4f4f5;
-    --fg-muted: #a8a8b0;
-    --fg-soft: #6f6f78;
-    --line: rgba(244, 244, 245, 0.1);
-    --line-strong: rgba(244, 244, 245, 0.22);
-    --focus: #60a5fa;
-    --heart: #fb7185;
+    --bg: #0e0c0a;
+    --bg-elev: #181613;
+    --bg-elev-2: #211e19;
+    --fg: #f0e9da;
+    --fg-muted: #a39c8e;
+    --fg-soft: #6e6258;
+    --line: rgba(240, 233, 218, 0.10);
+    --line-strong: rgba(240, 233, 218, 0.22);
+    --focus: #f4a261;
+    --heart: #f4828c;
+    --grain-blend: screen;
+    --grain-opacity: 0.05;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0b0b0d;
-  --bg-elev: #131316;
-  --bg-elev-2: #1a1a1e;
-  --fg: #f4f4f5;
-  --fg-muted: #a8a8b0;
-  --fg-soft: #6f6f78;
-  --line: rgba(244, 244, 245, 0.1);
-  --line-strong: rgba(244, 244, 245, 0.22);
-  --focus: #60a5fa;
-  --heart: #fb7185;
+  --bg: #0e0c0a;
+  --bg-elev: #181613;
+  --bg-elev-2: #211e19;
+  --fg: #f0e9da;
+  --fg-muted: #a39c8e;
+  --fg-soft: #6e6258;
+  --line: rgba(240, 233, 218, 0.10);
+  --line-strong: rgba(240, 233, 218, 0.22);
+  --focus: #f4a261;
+  --heart: #f4828c;
+  --grain-blend: screen;
+  --grain-opacity: 0.05;
 }
 :root[data-theme="light"] {
-  --bg: #fbfbfa;
-  --bg-elev: #ffffff;
-  --bg-elev-2: #f4f4f3;
-  --fg: #0f0f10;
-  --fg-muted: #5e5e66;
-  --fg-soft: #8a8a92;
-  --line: rgba(15, 15, 16, 0.09);
-  --line-strong: rgba(15, 15, 16, 0.18);
-  --focus: #2563eb;
+  --bg: #f5f1e8;
+  --bg-elev: #fbf8f1;
+  --bg-elev-2: #ece6d8;
+  --fg: #1a1612;
+  --fg-muted: #6e6258;
+  --fg-soft: #a39c8e;
+  --line: rgba(26, 22, 18, 0.10);
+  --line-strong: rgba(26, 22, 18, 0.22);
+  --focus: #b85228;
+  --heart: #c1413f;
+  --grain-blend: multiply;
+  --grain-opacity: 0.08;
+}
+
+/* ---------- Brand colors per panel ----------
+   Declared as CSS variables on the data-area selector so the inline
+   <li style=...> isn't needed. See project_brand_colors memory for
+   the reasoning behind each hex. */
+.panel[data-area="tech"]  { --brand: #E3262E; }
+.panel[data-area="theo"]  { --brand: #FF5C00; }
+.panel[data-area="edu"]   { --brand: #A73B74; }
+.panel[data-area="found"] { --brand: #006D77; }
+.panel[data-area="min"]   { --brand: #1E3A5F; }
+
+/* Iglesia Local dark-mode lift. The primary navy #1E3A5F is too dark
+   to read on warm-black (contrast ~1.8); we lift it to a sapphire that
+   keeps the same hue (~213°) so the brand still reads as navy, just
+   brighter. Note: this is a parlox.cc render variant only — the
+   church's actual brand color stays unchanged in their own assets. */
+:root[data-theme="dark"] .panel[data-area="min"] {
+  --brand: #4670A5;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="auto"] .panel[data-area="min"] {
+    --brand: #4670A5;
+  }
 }
 
 /* ---------- Globals ---------- */
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: var(--fs-base);
+  line-height: 1.55;
   background: var(--bg);
   color: var(--fg);
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Paper grain — fixed, mix-blended over the whole page so it doesn't
+   shift on scroll. SVG fractalNoise inlined as data URI to avoid an
+   extra request. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 
 :focus-visible {
@@ -167,13 +216,13 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-5);
   border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg) 80%, transparent);
-  backdrop-filter: saturate(140%) blur(8px);
   position: sticky;
   top: 0;
   z-index: 50;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(140%) blur(10px);
 }
 @media (min-width: 768px) {
   .topbar {
@@ -183,16 +232,18 @@ body {
 
 .mark {
   display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  align-items: baseline;
+  gap: 0.4em;
+  font-family: var(--font-display);
+  font-weight: 500;
   font-size: var(--fs-md);
-  padding: var(--space-2);
-  margin: calc(var(--space-2) * -1);
+  font-variation-settings: "opsz" 14;
+  letter-spacing: -0.015em;
 }
-.mark-handle {
-  font-variant-numeric: tabular-nums;
+.mark-at {
+  font-style: italic;
+  color: var(--focus);
+  font-weight: 600;
 }
 
 .topbar-actions {
@@ -210,13 +261,14 @@ body {
   min-width: 44px;
   padding: 0 var(--space-4);
   border-radius: 999px;
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: var(--fs-sm);
   transition: background var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
 }
 .btn:hover {
-  background: var(--line);
+  background: var(--bg-elev-2);
 }
 .btn:active {
   transform: scale(0.97);
@@ -262,72 +314,92 @@ body {
 }
 
 .btn-lang {
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: var(--fs-xs);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   min-width: 44px;
   padding: 0 var(--space-3);
 }
 
-/* ---------- Page layout ----------
-   Body is column-flex (topbar / main / footer).
-   .page itself is column-flex so the directory can grow to fill
-   the remaining vertical space — that's how we get the 5 strips
-   to fill the laptop viewport on first paint. */
+/* ---------- Page layout ---------- */
 .page {
   flex: 1 0 auto;
   width: 100%;
   max-width: var(--container);
   margin: 0 auto;
-  padding: var(--space-5) var(--space-4);
+  padding: var(--space-6) var(--space-5) var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-6);
   min-height: 0;
+  position: relative;
+  z-index: 2;
 }
 @media (min-width: 768px) {
   .page {
-    padding: var(--space-6) var(--space-6);
-    gap: var(--space-5);
+    padding: var(--space-8) var(--space-6) var(--space-6);
+    gap: var(--space-8);
   }
 }
 
-/* ---------- Byline (name in flow) ---------- */
-.byline {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+/* ---------- Hero ---------- */
+.hero {
+  display: grid;
+  gap: var(--space-3);
+  animation: rise 700ms var(--ease) both;
 }
-.byline-name {
-  font-size: var(--fs-md);
+.hero-name {
+  font-family: var(--font-display);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
+  font-size: var(--fs-xl);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
   color: var(--fg);
+  /* Stay on a single line when the viewport gives us room; the clamp
+     on font-size already shrinks gracefully at narrow widths, so we
+     let it wrap there naturally. */
+  text-wrap: balance;
 }
-.byline-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  font-size: var(--fs-xs);
+.hero-tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: "opsz" 36;
+  font-size: var(--fs-md);
   color: var(--fg-muted);
   line-height: 1.4;
+  max-width: 38ch;
 }
-.byline-handle {
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+  margin-top: var(--space-2);
 }
-.byline-sep {
+.hero-handle {
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.hero-handle .at {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--focus);
+}
+.hero-sep {
   color: var(--fg-soft);
 }
-.byline-email {
+.hero-email {
   color: var(--fg-muted);
-  text-decoration: none;
   transition: color var(--dur-fast) var(--ease);
 }
-.byline-email:hover,
-.byline-email:focus-visible {
+.hero-email:hover,
+.hero-email:focus-visible {
   color: var(--fg);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -373,13 +445,13 @@ body {
     box-shadow var(--dur) var(--ease);
   will-change: transform;
   /* Cards fade in with a subtle stagger on first paint. */
-  animation: card-in 460ms var(--ease) both;
+  animation: card-in 520ms var(--ease) both;
 }
-.panel:nth-child(1) { animation-delay: 40ms; }
-.panel:nth-child(2) { animation-delay: 90ms; }
-.panel:nth-child(3) { animation-delay: 140ms; }
-.panel:nth-child(4) { animation-delay: 190ms; }
-.panel:nth-child(5) { animation-delay: 240ms; }
+.panel:nth-child(1) { animation-delay: 80ms; }
+.panel:nth-child(2) { animation-delay: 140ms; }
+.panel:nth-child(3) { animation-delay: 200ms; }
+.panel:nth-child(4) { animation-delay: 260ms; }
+.panel:nth-child(5) { animation-delay: 320ms; }
 
 .panel.is-active {
   box-shadow: 0 -16px 40px -16px rgba(0, 0, 0, 0.28);
@@ -395,45 +467,30 @@ body {
   text-align: left;
   color: inherit;
 }
+.panel-tab-left {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
 .panel-area {
+  font-family: var(--font-body);
   font-size: var(--fs-base);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--brand, var(--fg));
 }
-
-/* "+" toggle that becomes "×" when active. Drawn with two pseudo
-   elements so it scales crisply at any size. */
-.panel-toggle {
-  position: relative;
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  color: var(--fg-soft);
-  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
-}
-.panel-toggle::before,
-.panel-toggle::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  background: currentColor;
-  border-radius: 1px;
-}
-.panel-toggle::before {
-  width: 100%;
-  height: 1.5px;
-}
-.panel-toggle::after {
-  width: 1.5px;
-  height: 100%;
-  transition: transform var(--dur) var(--ease);
-}
-.panel.is-active .panel-toggle {
-  transform: rotate(45deg);
-  color: var(--brand, var(--fg));
+.panel-status {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--fs-xs);
+  color: var(--brand, var(--fg-muted));
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--brand) 38%, transparent);
+  background: color-mix(in srgb, var(--brand) 8%, transparent);
+  white-space: nowrap;
 }
 
 .panel-content {
@@ -442,7 +499,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0 var(--space-5) var(--space-6);
+  padding: var(--space-3) var(--space-5) var(--space-6);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -460,21 +517,25 @@ body {
 }
 
 .panel-kicker {
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-variation-settings: "opsz" 24;
+  font-size: var(--fs-sm);
   color: var(--brand, var(--fg-muted));
   max-width: 32ch;
 }
 .panel-brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variation-settings: "opsz" 96, "SOFT" 50;
   font-size: var(--fs-lg);
-  font-weight: 700;
+  line-height: 1.05;
   letter-spacing: -0.02em;
-  line-height: 1.1;
   color: var(--fg);
 }
 .panel-slogan {
+  font-family: var(--font-body);
   font-size: var(--fs-sm);
   color: var(--fg-muted);
   max-width: 38ch;
@@ -486,15 +547,32 @@ body {
   align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-2);
+  font-family: var(--font-body);
   font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--brand, var(--fg));
   padding: var(--space-2) 0;
   min-height: 44px;
+  position: relative;
 }
-.panel-link:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+.panel-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 6px;
+  height: 1px;
+  background: currentColor;
+  transition: right var(--dur) var(--ease);
+}
+.panel-link:hover::after {
+  right: 28px;
+}
+.panel-link .arrow {
+  transition: transform var(--dur) var(--ease);
+}
+.panel-link:hover .arrow {
+  transform: translateX(3px);
 }
 
 /* ====================================================
@@ -517,7 +595,7 @@ body {
     display: flex;
     width: 100%;
     height: 100%;
-    min-height: clamp(360px, 60dvh, 640px);
+    min-height: clamp(380px, 58dvh, 640px);
     gap: var(--space-3);
   }
 
@@ -531,6 +609,7 @@ body {
     border-top: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: none;
+    background: var(--bg-elev);
     transform: none;
     transition: flex-grow var(--dur) var(--ease),
       border-color var(--dur) var(--ease),
@@ -555,25 +634,32 @@ body {
     inset: 0;
     height: 100%;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: var(--space-5) var(--space-3);
+    justify-content: space-between;
+    align-items: stretch;
+    padding: var(--space-5) var(--space-4);
     background: transparent;
   }
-  .panel-toggle {
-    display: none;
+  .panel-tab-left {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    flex: 1;
+    justify-content: center;
   }
   .panel-area {
-    /* Vertical text — reads bottom→top, conventional. Sized to fill
-       the strip with presence without crowding it. */
+    /* Vertical text — reads bottom→top, conventional. */
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    font-size: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-align: center;
     transition: opacity var(--dur) var(--ease),
       transform var(--dur) var(--ease);
+  }
+  .panel-status {
+    align-self: center;
+    margin-top: auto;
   }
 
   .panel-content {
@@ -591,10 +677,7 @@ body {
   }
   .panel-slogan {
     flex: none;
-    max-width: 28ch;
-  }
-  .panel-link {
-    margin-top: var(--space-2);
+    max-width: 30ch;
   }
 
   /* Expand on hover, keyboard focus, or programmatic activation. */
@@ -603,7 +686,8 @@ body {
   .panel.is-active {
     flex-grow: 4;
     border-color: var(--line-strong);
-    box-shadow: 0 8px 28px -16px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 12px 36px -18px
+      color-mix(in srgb, var(--brand) 60%, rgba(0, 0, 0, 0.4));
   }
   .panel:hover::after,
   .panel:focus-within::after,
@@ -616,12 +700,22 @@ body {
     opacity: 0;
     transform: rotate(180deg) translateY(-12px);
   }
+  .panel:hover .panel-status,
+  .panel:focus-within .panel-status,
+  .panel.is-active .panel-status {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .panel-status {
+    transition: opacity var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
   .panel:hover .panel-content,
   .panel:focus-within .panel-content,
   .panel.is-active .panel-content {
     opacity: 1;
     pointer-events: auto;
-    transition-delay: 120ms;
+    transition-delay: 140ms;
   }
 }
 
@@ -635,15 +729,17 @@ body {
   color: var(--fg-muted);
   border-top: 1px solid var(--line);
   background: var(--bg);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 .bottombar-text {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.35em 0.55em;
+  gap: 0.35em 0.6em;
   line-height: 1.5;
 }
 .bb-segment {
@@ -654,11 +750,6 @@ body {
 }
 .bb-sep {
   color: var(--fg-soft);
-}
-.bb-handle {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--fg-muted);
 }
 .bb-link {
   color: var(--fg);
@@ -682,15 +773,43 @@ body {
   transform: translateY(-1px);
 }
 
+/* On phone widths the inline footer wraps awkwardly with the middle
+   dots stranded at line edges. Stack the segments and hide the
+   separators — reads like a colophon. */
+@media (max-width: 599.98px) {
+  .bottombar {
+    min-height: 0;
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+  }
+  .bottombar-text {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .bb-sep {
+    display: none;
+  }
+}
+
 /* ---------- Motion ---------- */
 @keyframes card-in {
   from {
     opacity: 0;
-    transform: translateY(var(--y, 0px));
+    transform: translateY(calc(var(--y, 0px) + 12px));
   }
   to {
     opacity: 1;
     transform: translateY(var(--y, 0px));
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
