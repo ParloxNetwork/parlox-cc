@@ -15,9 +15,10 @@ for the full breakdown:
   (`AGPL-3.0-only`, full text in [`LICENSE`](LICENSE))
 - **Documentation & original creative content** → Creative Commons
   Attribution-ShareAlike 4.0 (`CC-BY-SA-4.0`)
-- **Brand assets** (logos/wordmarks of Parlox Network, Cafecito
-  Teológico, Cedesco Academia, Educalisa, Alianza República; personal
-  photographs) → © All rights reserved, **excluded** from the licenses
+- **Reserved assets** — brand logos/wordmarks of Parlox Network,
+  Cafecito Teológico, Cedesco Academia, Educalisa, Alianza República;
+  personal photographs; and any other asset the author deliberately
+  reserves → © All rights reserved, **excluded** from the licenses
   above. Their presence here is for transparency and to allow code
-  reuse; it does **not** grant any right to reuse the marks. See
-  [`assets/brand/`](assets/brand/).
+  reuse; it does **not** grant any right to reuse them. See
+  [`assets/reserved/`](assets/reserved/).
