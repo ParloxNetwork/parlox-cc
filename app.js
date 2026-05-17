@@ -5,8 +5,12 @@
 // Behavior:
 //   • Desktop (≥ 768px): pure CSS hover/focus accordion.
 //   • Mobile (< 768px): wallet/business-card stack; tap to expand.
-//   • Theme + lang persist via localStorage with no-flash bootstrap
-//     in <head>. Lang mirrors to URL (?lang=en) for shareable links.
+//   • Theme: light/dark only (no "auto" toggle state). No stored
+//     choice → follow the browser each load; an explicit toggle
+//     persists and wins from then on. No-flash bootstrap in <head>.
+//   • Lang persists via localStorage; mirrors to URL (?lang=en).
+//   • QR popover flips below the chip if it would collide with the
+//     sticky topbar.
 //
 // Anti-scrape:
 //   • Phone digits stored as char codes; URL built only on click.
@@ -51,6 +55,21 @@ const dict = {
     "status.activo": "activo",
     "status.proximo": "próximo",
     "link.soon": "próximamente",
+    "qd.cryptoNote": "Dale clic para ver todas mis direcciones crypto →",
+    "crypto.back": "← Volver",
+    "crypto.eyebrow": "Direcciones crypto",
+    "crypto.title": "Recibir crypto",
+    "crypto.intro":
+      "Estas son mis direcciones para recibir criptomonedas. Antes de enviar, confirma su autenticidad con la firma PGP al pie de la página.",
+    "crypto.copy": "Copiar dirección",
+    "crypto.btcNet": "Red: Bitcoin (nativo SegWit, bech32).",
+    "crypto.ethNet": "Red: Ethereum (EVM). Confirma la red antes de enviar.",
+    "crypto.verifyTitle": "Verificación PGP",
+    "crypto.verifyIntro":
+      "Estas direcciones están firmadas con mi clave PGP privada. Cualquiera puede comprobar que no fueron alteradas: descarga mi clave pública, impórtala y verifica el bloque firmado de abajo. Si una dirección fue manipulada, la verificación falla.",
+    "crypto.keyLabel": "Clave pública:",
+    "crypto.wkd": "Autodiscovery WKD en",
+    "crypto.howto": "Comprobar:",
     "wa.message": "Hola, vengo de parlox.cc",
     "mail.subject": "Hola desde parlox.cc",
   },
@@ -81,6 +100,21 @@ const dict = {
     "status.activo": "active",
     "status.proximo": "upcoming",
     "link.soon": "coming soon",
+    "qd.cryptoNote": "Click to see all my crypto addresses →",
+    "crypto.back": "← Back",
+    "crypto.eyebrow": "Crypto addresses",
+    "crypto.title": "Receive crypto",
+    "crypto.intro":
+      "These are my addresses for receiving cryptocurrency. Before you send, confirm they are authentic using the PGP signature at the foot of the page.",
+    "crypto.copy": "Copy address",
+    "crypto.btcNet": "Network: Bitcoin (native SegWit, bech32).",
+    "crypto.ethNet": "Network: Ethereum (EVM). Double-check the network before sending.",
+    "crypto.verifyTitle": "PGP verification",
+    "crypto.verifyIntro":
+      "These addresses are signed with my private PGP key. Anyone can check they haven't been tampered with: download my public key, import it, and verify the signed block below. If an address was altered, verification fails.",
+    "crypto.keyLabel": "Public key:",
+    "crypto.wkd": "WKD auto-discovery at",
+    "crypto.howto": "To verify:",
     "wa.message": "Hi, I came from parlox.cc",
     "mail.subject": "Hi from parlox.cc",
   },
@@ -88,7 +122,11 @@ const dict = {
 
 const state = {
   lang: document.documentElement.getAttribute("lang") || "es",
-  theme: document.documentElement.getAttribute("data-theme") || "auto",
+  // Bootstrap already resolved this to "light" or "dark" before paint.
+  theme:
+    document.documentElement.getAttribute("data-theme") === "dark"
+      ? "dark"
+      : "light",
 };
 
 // ---------- i18n ----------
@@ -124,23 +162,16 @@ function toggleLang() {
   applyI18n();
 }
 
-// ---------- Theme ----------
+// ---------- Theme (light/dark only — Option 1) ----------
 function applyTheme() {
   document.documentElement.setAttribute("data-theme", state.theme);
   const btn = document.getElementById("theme-toggle");
-  if (btn) {
-    const isDark =
-      state.theme === "dark" ||
-      (state.theme === "auto" &&
-        matchMedia("(prefers-color-scheme: dark)").matches);
-    btn.setAttribute("aria-pressed", String(isDark));
-    btn.title = `Tema: ${state.theme}`;
-  }
+  if (btn) btn.setAttribute("aria-pressed", String(state.theme === "dark"));
 }
 
 function toggleTheme() {
-  state.theme =
-    state.theme === "auto" ? "light" : state.theme === "light" ? "dark" : "auto";
+  // Explicit choice: flip and persist (wins over the browser from now on).
+  state.theme = state.theme === "dark" ? "light" : "dark";
   try {
     localStorage.setItem(STORAGE_KEYS.theme, state.theme);
   } catch {}
@@ -160,9 +191,7 @@ function openWhatsApp() {
 
 // ---------- Email ----------
 // Address is reconstructed from data-email-user and data-email-host so
-// no literal "user@host" string lives in the static HTML. Visible text
-// is rendered at init (for users to see/copy). The mailto: URL is
-// built only on click.
+// no literal "user@host" string lives in the static HTML.
 function bindEmail() {
   document
     .querySelectorAll("[data-email-user][data-email-host]")
@@ -177,6 +206,50 @@ function bindEmail() {
         window.location.href = `mailto:${addr}?subject=${subject}`;
       });
     });
+}
+
+// ---------- QR popover (collision-aware) ----------
+// Default above the chip; flip below if it would overlap the sticky
+// topbar. Only present on the home page.
+function bindQrPopover() {
+  const qd = document.getElementById("qd-crypto");
+  const topbar = document.querySelector(".topbar");
+  if (!qd || !topbar) return;
+  const place = () => {
+    const chip = qd.getBoundingClientRect();
+    const bar = topbar.getBoundingClientRect();
+    const qr = qd.querySelector(".qd-qr");
+    if (!qr) return;
+    const needed = qr.offsetHeight + 16;
+    qd.classList.toggle("flip-down", chip.top - bar.bottom < needed);
+  };
+  qd.addEventListener("mouseenter", place);
+  qd.addEventListener("focusin", place);
+  window.addEventListener("resize", place, { passive: true });
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (qd.matches(":hover")) place();
+    },
+    { passive: true }
+  );
+}
+
+// ---------- Copy buttons (crypto page) ----------
+function bindCopy() {
+  document.querySelectorAll("[data-copy]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const src = document.getElementById(b.getAttribute("data-copy"));
+      if (!src || !navigator.clipboard) return;
+      navigator.clipboard.writeText(src.textContent.trim()).then(() => {
+        const prev = b.textContent;
+        b.textContent = state.lang === "es" ? "Copiado ✓" : "Copied ✓";
+        setTimeout(() => {
+          b.textContent = prev;
+        }, 1600);
+      });
+    });
+  });
 }
 
 // ---------- Wallet stack (mobile) ----------
@@ -218,7 +291,6 @@ function layoutWallet() {
 function setActivePanel(idx) {
   const panelsEl = document.querySelector(".panels");
   const cards = getCards();
-  // Tap on already-active toggles closed.
   const newActive =
     panelsEl.dataset.activeIndex === String(idx) ? null : idx;
 
@@ -239,7 +311,6 @@ function bindPanels() {
     const tab = panel.querySelector(".panel-tab");
     if (!tab) return;
     tab.addEventListener("click", () => {
-      // Mobile only — desktop uses :hover/:focus-within in CSS.
       if (mobileMq.matches) {
         setActivePanel(Number(panel.dataset.index));
       }
@@ -264,6 +335,8 @@ function init() {
   applyTheme();
   bindEmail();
   bindPanels();
+  bindQrPopover();
+  bindCopy();
   layoutWallet();
 
   document.getElementById("wa-btn")?.addEventListener("click", openWhatsApp);
@@ -274,10 +347,6 @@ function init() {
 
   window.addEventListener("resize", layoutWallet, { passive: true });
   mobileMq.addEventListener("change", resetActiveOnBreakpointChange);
-  matchMedia("(prefers-color-scheme: dark)").addEventListener(
-    "change",
-    applyTheme
-  );
 }
 
 if (document.readyState === "loading") {

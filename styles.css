@@ -1,8 +1,9 @@
 /* =========================================================
    parlox.cc — editorial directory
-   Fraunces (display) + DM Sans (body) on warm cream/black
+   Lora (display) + DM Sans (body) on warm cream/black
    with paper grain. Hover-accordion (desktop) and wallet
    stack (mobile). Brand-as-accent per panel.
+   Theme: light/dark only (no "auto" — bootstrap resolves it).
    ========================================================= */
 
 /* ---------- Modern reset ---------- */
@@ -83,28 +84,15 @@ img {
   /* Mobile wallet stack tab height */
   --tab-h-mobile: 68px;
 
-  --font-display: "Fraunces", "Times New Roman", Georgia, serif;
+  --font-display: "Lora", "Times New Roman", Georgia, serif;
   --font-body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
 }
 
-/* OS-driven dark when user hasn't picked. */
-@media (prefers-color-scheme: dark) {
-  :root[data-theme="auto"] {
-    --bg: #0e0c0a;
-    --bg-elev: #181613;
-    --bg-elev-2: #211e19;
-    --fg: #f0e9da;
-    --fg-muted: #a39c8e;
-    --fg-soft: #6e6258;
-    --line: rgba(240, 233, 218, 0.10);
-    --line-strong: rgba(240, 233, 218, 0.22);
-    --focus: #f4a261;
-    --heart: #f4828c;
-    --grain-blend: screen;
-    --grain-opacity: 0.05;
-  }
-}
+/* Theme is light/dark only. The no-flash bootstrap in <head> resolves
+   the initial theme from localStorage or prefers-color-scheme and sets
+   data-theme to an explicit "light"/"dark" before paint — so there is
+   no "auto" state to style here. */
 :root[data-theme="dark"] {
   --bg: #0e0c0a;
   --bg-elev: #181613;
@@ -151,11 +139,6 @@ img {
    church's actual brand color stays unchanged in their own assets. */
 :root[data-theme="dark"] .panel[data-area="min"] {
   --brand: #4670A5;
-}
-@media (prefers-color-scheme: dark) {
-  :root[data-theme="auto"] .panel[data-area="min"] {
-    --brand: #4670A5;
-  }
 }
 
 /* ---------- Globals ---------- */
@@ -299,12 +282,8 @@ body::before {
 }
 
 .icon-sun,
-.icon-moon,
-.icon-auto {
+.icon-moon {
   display: none;
-}
-:root[data-theme="auto"] .icon-auto {
-  display: block;
 }
 :root[data-theme="light"] .icon-moon {
   display: block;
@@ -347,6 +326,8 @@ body::before {
 .hero {
   display: grid;
   gap: var(--space-3);
+  position: relative;
+  z-index: 5; /* keep the QR popover above the directory below */
   animation: rise 700ms var(--ease) both;
 }
 .hero-name {
@@ -372,7 +353,11 @@ body::before {
   line-height: 1.4;
   max-width: 38ch;
 }
-.hero-meta {
+/* ---------- Quick-data line ----------
+   Small, scannable identity row: handle · email · BTC · PGP.
+   PGP goes last so the fingerprint is the first thing to wrap to a
+   second line on narrow widths. */
+.quick-data {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -381,28 +366,96 @@ body::before {
   color: var(--fg-muted);
   margin-top: var(--space-2);
 }
-.hero-handle {
+.qd-sep {
+  color: var(--fg-soft);
+}
+.qd-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+.qd-handle {
   font-family: var(--font-body);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
-.hero-handle .at {
+.qd-handle .at {
   font-family: var(--font-display);
   font-style: italic;
   color: var(--focus);
 }
-.hero-sep {
+.qd-label {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.92em;
   color: var(--fg-soft);
 }
-.hero-email {
+.qd-link {
   color: var(--fg-muted);
-  transition: color var(--dur-fast) var(--ease);
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
 }
-.hero-email:hover,
-.hero-email:focus-visible {
+.qd-link:hover,
+.qd-link:focus-visible {
   color: var(--fg);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  border-bottom-color: currentColor;
+}
+.qd-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.95em;
+}
+
+/* Crypto chip + QR popover. Default above; JS adds .flip-down when it
+   would collide with the sticky topbar. */
+.qd-crypto {
+  position: relative;
+}
+.qd-qr {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 10px);
+  z-index: 80;
+  width: 208px;
+  padding: var(--space-3);
+  background: var(--bg-elev);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  box-shadow: 0 14px 40px -18px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+.qd-crypto.flip-down .qd-qr {
+  bottom: auto;
+  top: calc(100% + 10px);
+  transform: translateY(-6px);
+}
+.qd-crypto:hover .qd-qr,
+.qd-crypto:focus-within .qd-qr {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.qd-qr img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: #fff;
+  padding: 8px;
+}
+.qd-qr-note {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+  line-height: 1.35;
+}
+.qd-qr-note strong {
+  color: var(--fg);
 }
 
 /* ---------- Directory ---------- */
@@ -410,6 +463,8 @@ body::before {
   flex: 1 1 auto;
   display: flex;
   min-height: 0;
+  position: relative;
+  z-index: 1; /* below .hero so the QR popover paints over the cards */
 }
 
 /* ====================================================
@@ -466,6 +521,8 @@ body::before {
   padding: 0 var(--space-5);
   text-align: left;
   color: inherit;
+  position: relative;
+  z-index: 2; /* collapsed label/tab above the brand banner */
 }
 .panel-tab-left {
   display: flex;
@@ -506,8 +563,53 @@ body::before {
   opacity: 0;
   transform: translateY(8px);
   pointer-events: none;
+  z-index: 1; /* text sits above the brand banner watermark */
   transition: opacity var(--dur) var(--ease),
     transform var(--dur) var(--ease);
+}
+
+/* ---------- Brand banner (watermark) ----------
+   Fills the empty UPPER area of an open card, top-anchored, capped
+   height, fades out at its bottom edge so it never reaches the text.
+   Off on mobile (the wallet card content is top-aligned and would
+   overlap). The Parlox logo (tech) is a RESERVED <img> with the brand
+   color baked in; the other four are inline POC motifs recolored via
+   currentColor (= --brand) — real brand SVGs are reserved assets. */
+.panel-banner {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(46%, 13rem);
+  height: 38%;
+  color: var(--brand, var(--fg));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  place-items: start center;
+  transition: opacity var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.5) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.5) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+.panel-banner svg,
+.panel-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top;
+  fill: currentColor;
 }
 .panel.is-active .panel-content {
   opacity: 1;
@@ -554,6 +656,7 @@ body::before {
   padding: var(--space-2) 0;
   min-height: 44px;
   position: relative;
+  z-index: 1;
 }
 .panel-link::after {
   content: "";
@@ -679,6 +782,12 @@ body::before {
     flex: none;
     max-width: 30ch;
   }
+  .panel-banner {
+    display: grid;
+    top: 0;
+    height: 38%;
+    width: min(44%, 12rem);
+  }
 
   /* Expand on hover, keyboard focus, or programmatic activation. */
   .panel:hover,
@@ -717,10 +826,18 @@ body::before {
     pointer-events: auto;
     transition-delay: 140ms;
   }
+  .panel:hover .panel-banner,
+  .panel:focus-within .panel-banner,
+  .panel.is-active .panel-banner {
+    opacity: 0.32;
+    transform: translateX(-50%) translateY(0);
+    transition-delay: 160ms;
+  }
 }
 
 /* ---------- Bottombar ---------- */
 .bottombar {
+  flex-shrink: 0;
   min-height: var(--bottombar-h);
   display: flex;
   align-items: center;
@@ -730,6 +847,7 @@ body::before {
   border-top: 1px solid var(--line);
   background: var(--bg);
   padding: var(--space-3) var(--space-4);
+  padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
   text-align: center;
   position: relative;
   z-index: 2;
@@ -780,7 +898,7 @@ body::before {
   .bottombar {
     min-height: 0;
     padding-top: var(--space-4);
-    padding-bottom: var(--space-4);
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
   }
   .bottombar-text {
     flex-direction: column;
@@ -789,6 +907,175 @@ body::before {
   .bb-sep {
     display: none;
   }
+}
+
+/* ====================================================
+   Internal document page (e.g. /crypto)
+   ====================================================
+   Reuses every shared token, the topbar, footer, theme and grain
+   from above — that's what keeps internal pages visually coherent
+   with the home as the site grows. Only page-specific layout lives
+   here. */
+.page-doc {
+  max-width: 60rem;
+  justify-content: flex-start;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-5);
+}
+.btn-lang-link {
+  gap: 0.3em;
+}
+.ph {
+  display: grid;
+  gap: var(--space-3);
+  animation: rise 600ms var(--ease) both;
+}
+.ph-eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-muted);
+}
+.ph-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-xl);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+.ph-intro {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--fg-muted);
+  max-width: 52ch;
+}
+
+.addr {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--brand, var(--focus));
+  border-radius: var(--radius);
+  background: var(--bg-elev);
+  padding: var(--space-5);
+}
+@media (min-width: 620px) {
+  .addr {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+}
+.addr-qr {
+  width: 160px;
+  height: 160px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px;
+}
+.addr-qr img {
+  width: 100%;
+  height: 100%;
+}
+.addr-main {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.addr-net {
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: var(--fs-sm);
+  color: var(--focus);
+}
+.addr-val {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--fs-sm);
+  word-break: break-all;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: var(--space-3);
+}
+.addr-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.btn-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--fg);
+  transition: background var(--dur-fast) var(--ease);
+}
+.btn-copy:hover {
+  background: var(--bg-elev-2);
+}
+.addr-note {
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+
+.verify {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-elev);
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-3);
+}
+.verify h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.verify p {
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+}
+.verify a {
+  color: var(--focus);
+  font-weight: 600;
+  border-bottom: 1px solid currentColor;
+}
+.verify-howto {
+  font-size: var(--fs-xs);
+}
+.fpr {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--fs-sm);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: var(--space-3);
+  word-break: break-word;
+}
+pre.sig {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+  background: var(--bg);
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  padding: var(--space-4);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* ---------- Motion ---------- */

@@ -37,11 +37,17 @@
     />
 
     <!-- Inline no-flash bootstrap: applies persisted theme/lang BEFORE
-         the stylesheet paints, eliminating FOUC. -->
+         the stylesheet paints, eliminating FOUC. Theme is light/dark
+         only (Option 1): no stored choice -> follow the browser this
+         load; an explicit toggle persists and wins from then on. -->
     <script>
       (function () {
         try {
-          var t = localStorage.getItem("parlox.theme") || "auto";
+          var t = localStorage.getItem("parlox.theme");
+          if (t !== "light" && t !== "dark")
+            t = matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
           document.documentElement.setAttribute("data-theme", t);
           var url = new URL(location.href);
           var l =
@@ -58,7 +64,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=DM+Sans:opsz,wght@9..40,400..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..600&family=DM+Sans:opsz,wght@9..40,400..700&display=swap"
       rel="stylesheet"
     />
 
@@ -117,10 +123,6 @@
           <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
           </svg>
-          <svg class="icon icon-auto" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
-            <path fill="currentColor" d="M12 3a9 9 0 1 0 0 18V3z" />
-          </svg>
         </button>
         <button
           id="lang-toggle"
@@ -138,16 +140,53 @@
       <section class="hero">
         <h1 class="hero-name">Jonathan Ricardo Proaño Alcívar</h1>
         <p class="hero-tagline" data-i18n="tagline">Cinco frentes, una vocación.</p>
-        <p class="hero-meta">
-          <span class="hero-handle"><span class="at">@</span>parlox</span>
-          <span class="hero-sep" aria-hidden="true">·</span>
-          <a
-            class="hero-email"
-            href="#"
-            data-email-user="hola"
-            data-email-host="parlox.cc"
-            >&nbsp;</a
-          >
+        <p class="quick-data" aria-label="Datos de contacto y verificación">
+          <span class="qd-item qd-handle"><span class="at">@</span>parlox</span>
+          <span class="qd-sep" aria-hidden="true">·</span>
+
+          <span class="qd-item">
+            <span class="qd-label">Email</span>
+            <a
+              class="qd-link"
+              href="#"
+              data-email-user="jonathan"
+              data-email-host="parlox.net"
+              >&nbsp;</a
+            >
+          </span>
+          <span class="qd-sep" aria-hidden="true">·</span>
+
+          <span class="qd-item qd-crypto" id="qd-crypto">
+            <span class="qd-label">BTC</span>
+            <a
+              class="qd-link qd-mono qd-crypto-link"
+              href="/crypto"
+              aria-describedby="qd-qr-btc"
+              >bc1q…s5ll8</a
+            >
+            <span class="qd-qr" id="qd-qr-btc" role="tooltip">
+              <img
+                src="assets/btc-px-qr.svg"
+                alt="Código QR de la dirección Bitcoin"
+                width="190"
+                height="190"
+              />
+              <span class="qd-qr-note" data-i18n="qd.cryptoNote"
+                >Dale clic para ver todas mis direcciones crypto →</span
+              >
+            </span>
+          </span>
+          <span class="qd-sep" aria-hidden="true">·</span>
+
+          <span class="qd-item">
+            <span class="qd-label">PGP</span>
+            <a
+              class="qd-link qd-mono"
+              href="/parlox-key.asc"
+              title="Descargar clave pública OpenPGP (ASCII-armored)"
+              >119E EA31 622F 0835 6527 093D FE8E 9E1F 27C0 6406</a
+            >
+          </span>
         </p>
       </section>
 
@@ -165,6 +204,11 @@
               </span>
               <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
             </button>
+            <!-- Brand banner: real Parlox Network logo (RESERVED asset,
+                 assets/reserved/, brand red baked in). -->
+            <div class="panel-banner" aria-hidden="true">
+              <img src="assets/reserved/parlox-network.svg" alt="" />
+            </div>
             <div class="panel-content" id="content-tech">
               <span class="panel-kicker" data-i18n="desc.tech">Tecnología y desarrollo</span>
               <h2 class="panel-brand">Parlox Network</h2>
@@ -191,6 +235,11 @@
               </span>
               <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
             </button>
+            <!-- POC motif (cross) — placeholder; real Cafecito brand
+                 SVG will be a reserved asset. -->
+            <div class="panel-banner" aria-hidden="true">
+              <svg viewBox="0 0 100 140"><path fill="currentColor" d="M42 8h16v34h34v16H58v74H42V58H8V42h34z"/></svg>
+            </div>
             <div class="panel-content" id="content-theo">
               <span class="panel-kicker" data-i18n="desc.theo"
                 >Teología, divulgación y ministerio</span
@@ -221,6 +270,11 @@
               </span>
               <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
             </button>
+            <!-- POC motif (open book) — placeholder; real Cedesco brand
+                 SVG will be a reserved asset. -->
+            <div class="panel-banner" aria-hidden="true">
+              <svg viewBox="0 0 140 100"><path fill="currentColor" d="M70 18C54 6 30 6 12 14v74c18-7 42-7 58 5 16-12 40-12 58-5V14C110 6 86 6 70 18m-6 13v55c-14-7-32-7-46-3V28c14-5 32-4 46 3m12 0c14-7 32-6 46-3v55c-14-4-32-4-46 3z"/></svg>
+            </div>
             <div class="panel-content" id="content-edu">
               <span class="panel-kicker" data-i18n="desc.edu"
                 >Nivelación, asesoría educativa y formación</span
@@ -247,6 +301,11 @@
               </span>
               <span class="panel-status" data-state="proximo" data-i18n="status.proximo">próximo</span>
             </button>
+            <!-- POC motif (sprout) — placeholder; real Educalisa brand
+                 SVG will be a reserved asset. -->
+            <div class="panel-banner" aria-hidden="true">
+              <svg viewBox="0 0 120 130"><path d="M60 124V70m0 0C60 44 40 30 14 30c0 28 18 44 46 40m0-6c0-26 20-42 46-42 0 28-18 44-46 42" stroke="currentColor" stroke-width="9" fill="none" stroke-linecap="round"/></svg>
+            </div>
             <div class="panel-content" id="content-found">
               <span class="panel-kicker" data-i18n="desc.found"
                 >Fundación de impacto social</span
@@ -274,6 +333,11 @@
               </span>
               <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
             </button>
+            <!-- POC motif (chapel/arch) — placeholder; real Alianza
+                 República brand SVG will be a reserved asset. -->
+            <div class="panel-banner" aria-hidden="true">
+              <svg viewBox="0 0 120 130"><path fill="currentColor" d="M60 6 16 36v88h28V84a16 16 0 0 1 32 0v40h28V36zM52 50h16v16H52z"/></svg>
+            </div>
             <div class="panel-content" id="content-min">
               <span class="panel-kicker" data-i18n="desc.min">Iglesia local</span>
               <h2 class="panel-brand">Alianza República</h2>

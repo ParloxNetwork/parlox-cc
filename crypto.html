@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+
+    <title>Recibir crypto — @parlox</title>
+    <meta
+      name="description"
+      content="Direcciones crypto verificables de @parlox, firmadas con PGP."
+    />
+    <link rel="canonical" href="https://parlox.cc/crypto" />
+
+    <meta name="theme-color" content="#f5f1e8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0c0a" media="(prefers-color-scheme: dark)" />
+
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231a1612'/><text x='16' y='22' text-anchor='middle' font-family='Georgia, serif' font-style='italic' font-weight='600' font-size='18' fill='%23f5f1e8'>px</text></svg>"
+    />
+
+    <!-- Same no-flash bootstrap as the home page: theme is light/dark
+         only (Option 1); lang persists and mirrors to ?lang=en. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("parlox.theme");
+          if (t !== "light" && t !== "dark")
+            t = matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          document.documentElement.setAttribute("data-theme", t);
+          var url = new URL(location.href);
+          var l =
+            url.searchParams.get("lang") ||
+            localStorage.getItem("parlox.lang") ||
+            ((navigator.language || "es").slice(0, 2).toLowerCase() === "en"
+              ? "en"
+              : "es");
+          document.documentElement.setAttribute("lang", l);
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..600&family=DM+Sans:opsz,wght@9..40,400..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main" data-i18n="a11y.skip">Saltar al contenido</a>
+
+    <header class="topbar">
+      <a class="mark" href="/" aria-label="parlox.cc">
+        <span class="mark-at">@</span><span>parlox</span>
+      </a>
+      <nav class="topbar-actions" aria-label="Acciones del sitio">
+        <a class="btn btn-lang-link" href="/" data-i18n="crypto.back">← Volver</a>
+        <button
+          id="theme-toggle"
+          class="btn btn-icon"
+          type="button"
+          data-i18n-aria="a11y.theme"
+          aria-label="Cambiar tema"
+        >
+          <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" fill="currentColor" />
+            <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="12" y1="2" x2="12" y2="5" />
+              <line x1="12" y1="19" x2="12" y2="22" />
+              <line x1="2" y1="12" x2="5" y2="12" />
+              <line x1="19" y1="12" x2="22" y2="12" />
+              <line x1="4.5" y1="4.5" x2="6.6" y2="6.6" />
+              <line x1="17.4" y1="17.4" x2="19.5" y2="19.5" />
+              <line x1="4.5" y1="19.5" x2="6.6" y2="17.4" />
+              <line x1="17.4" y1="6.6" x2="19.5" y2="4.5" />
+            </g>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+          </svg>
+        </button>
+        <button
+          id="lang-toggle"
+          class="btn btn-lang"
+          type="button"
+          data-i18n-aria="a11y.lang"
+          aria-label="Cambiar idioma"
+        >
+          <span class="lang-current">ES</span>
+        </button>
+      </nav>
+    </header>
+
+    <main id="main" class="page page-doc">
+      <header class="ph">
+        <p class="ph-eyebrow" data-i18n="crypto.eyebrow">Direcciones crypto</p>
+        <h1 class="ph-title" data-i18n="crypto.title">Recibir crypto</h1>
+        <p class="ph-intro" data-i18n="crypto.intro">
+          Estas son mis direcciones para recibir criptomonedas. Antes de
+          enviar, confirma su autenticidad con la firma PGP al pie de la
+          página.
+        </p>
+      </header>
+
+      <section class="addr" aria-label="Bitcoin">
+        <div class="addr-qr">
+          <img
+            src="assets/btc-px-qr.svg"
+            alt="Código QR de la dirección Bitcoin"
+            width="140"
+            height="140"
+          />
+        </div>
+        <div class="addr-main">
+          <span class="addr-net">Bitcoin · BTC</span>
+          <code class="addr-val" id="btc">bc1qln7tqyllrw0qcg4lchedvsds697qylwc8s5ll8</code>
+          <div class="addr-actions">
+            <button class="btn-copy" type="button" data-copy="btc" data-i18n="crypto.copy">
+              Copiar dirección
+            </button>
+          </div>
+          <p class="addr-note" data-i18n="crypto.btcNet">
+            Red: Bitcoin (nativo SegWit, bech32).
+          </p>
+        </div>
+      </section>
+
+      <section class="addr" aria-label="Ethereum">
+        <div class="addr-qr">
+          <img
+            src="assets/eth-px-qr.svg"
+            alt="Código QR de la dirección Ethereum"
+            width="140"
+            height="140"
+          />
+        </div>
+        <div class="addr-main">
+          <span class="addr-net">Ethereum · ETH</span>
+          <code class="addr-val" id="eth">0x7154Db14fa02F4d873eD93fe9E8017B2FD77Ec56</code>
+          <div class="addr-actions">
+            <button class="btn-copy" type="button" data-copy="eth" data-i18n="crypto.copy">
+              Copiar dirección
+            </button>
+          </div>
+          <p class="addr-note" data-i18n="crypto.ethNet">
+            Red: Ethereum (EVM). Confirma la red antes de enviar.
+          </p>
+        </div>
+      </section>
+
+      <section class="verify">
+        <h2 data-i18n="crypto.verifyTitle">Verificación PGP</h2>
+        <p data-i18n="crypto.verifyIntro">
+          Estas direcciones están firmadas con mi clave PGP privada.
+          Cualquiera puede comprobar que no fueron alteradas: descarga mi
+          clave pública, impórtala y verifica el bloque firmado de abajo.
+          Si una dirección fue manipulada, la verificación falla.
+        </p>
+        <div class="fpr">
+          Fingerprint: 119E EA31 622F 0835 6527 093D FE8E 9E1F 27C0 6406
+        </div>
+        <p>
+          <span data-i18n="crypto.keyLabel">Clave pública:</span>
+          <a href="/parlox-key.asc">parlox.cc/parlox-key.asc</a> ·
+          <span data-i18n="crypto.wkd">Autodiscovery WKD en</span>
+          <code>/.well-known/openpgpkey/</code>
+        </p>
+        <p class="verify-howto">
+          <span data-i18n="crypto.howto">Comprobar:</span>
+          <code>gpg --recv-keys FE8E9E1F27C06406</code> ·
+          <code>gpg --verify</code>
+        </p>
+        <pre class="sig">-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Direcciones crypto oficiales de @parlox — https://parlox.cc/crypto
+BTC: bc1qln7tqyllrw0qcg4lchedvsds697qylwc8s5ll8
+ETH: 0x7154Db14fa02F4d873eD93fe9E8017B2FD77Ec56
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEWqSg6puap2f3Z3jObheL4sAkCm4FAmoJBMgACgkQbheL4sAk
+Cm5dRRAAk531IW/DdNG0BNwOaALs3eWGH9rNmgqJPQRjuhYlr1DuVkmMDX/VoJN8
+SRX85TP1GucdxaN/IpaOObXWYiRZeR9B/4bj1/64Nn/d/Tz4vqTHKEeJljWd4U/L
+BLPjhl0XRL2X7jLTKbcIRawp488pnts4swnVcAbmvxnlWi9SSjKrW6/1gG+ofra4
+KdX4wDzWMOW6WY/esAnaMI4cp9wDA+JWdu+CbOmWZN9gxN/O9jxdRZ/cwpD5F6Wj
+N7ijGXrRK5CaE+baE1zl0nAHJdzXRZ1L5KhAhAxKZaJKZ7a4WDRfTEi0D7nUapMa
+S6DhnWA53pFJSSAk9TRSic9mMjmXY04ZQlpu9OZiM+sjF4e0WtCg9mknHFl9QtF5
+6aLpGT0+HJklDOvOj0Gmh6gpqzKXLCTqlob9kIoPqcYsBPWTOE5H0l1iOyQHXI5K
++Xw4SgdzQ2dzXTD8FLSLGXxCBug4kq2bOwGMwLevlh5la9nwIUcMPiHm1exQlDhw
+sa4z0L6JJsPhykb64cZ4/81goaEIgIdykJYwzIDjFetTU1eTKIqW5sc8uvzCDPZh
+gybX8pu8zRPsfN1jIPEtxiKv/Rg7QLGfcFRjSKlHCnotaOZcOx+/MUY17trAZ+H4
+bKp53g4sherT18IzZ+O8w44x8JVih1ed5QFtkFkoq5+cLyehJUY=
+=NHjd
+-----END PGP SIGNATURE-----</pre>
+      </section>
+    </main>
+
+    <footer class="bottombar">
+      <p class="bottombar-text">
+        <span class="bb-segment">
+          <span data-i18n="footer.made">Hecho con</span>
+          <svg
+            class="footer-heart"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              fill="currentColor"
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z"
+            />
+          </svg>
+        </span>
+        <span class="bb-sep" aria-hidden="true">·</span>
+        <span class="bb-segment" data-i18n="footer.ai">Asistido con IA</span>
+        <span class="bb-sep" aria-hidden="true">·</span>
+        <span class="bb-segment">
+          <span data-i18n="footer.os">Código abierto en</span>
+          <a
+            class="bb-link"
+            href="https://github.com/ParloxNetwork/parlox-cc"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub</a
+          >
+        </span>
+      </p>
+    </footer>
+  </body>
+</html>
