@@ -3,27 +3,22 @@
 // Vanilla ES2022+ module. No deps.
 //
 // Behavior:
-//   • Desktop (≥ 768px): pure CSS hover/focus accordion.
-//   • Mobile (< 768px): wallet/business-card stack; tap to expand.
-//   • Theme: light/dark only (no "auto" toggle state). No stored
-//     choice → follow the browser each load; an explicit toggle
-//     persists and wins from then on. No-flash bootstrap in <head>.
-//   • Lang persists via localStorage; mirrors to URL (?lang=en).
-//   • QR popover flips below the chip if it would collide with the
-//     sticky topbar.
+//   - Desktop (>=768px): hover/focus + tap accordion.
+//   - Mobile (<768px): wallet/business-card stack.
+//   - Theme light/dark; circular reveal via View
+//     Transitions when supported (instant fallback).
+//   - Lang persists via localStorage; mirrors ?lang=en.
 //
-// Anti-scrape:
-//   • Phone digits stored as char codes; URL built only on click.
-//   • Email user/host kept in data-* attrs; the address is
-//     reconstructed at runtime — no literal "user@host" in the
-//     static HTML for naive harvesters to grab.
+// Anti-scrape: phone as char codes; email rebuilt at
+// runtime from data-* attrs (no literal user@host).
 // =========================================================
-
 const STORAGE_KEYS = { theme: "parlox.theme", lang: "parlox.lang" };
 
-// "593987143909" → char codes. The number never appears as a literal
-// string in the source, so regex-based scrapers won't pick it up.
 const PHONE_CODES = [53, 57, 51, 57, 56, 55, 49, 52, 51, 57, 48, 57];
+
+const prefersReducedMotion = matchMedia(
+  "(prefers-reduced-motion: reduce)"
+);
 
 // ---------- i18n ----------
 const dict = {
@@ -122,7 +117,6 @@ const dict = {
 
 const state = {
   lang: document.documentElement.getAttribute("lang") || "es",
-  // Bootstrap already resolved this to "light" or "dark" before paint.
   theme:
     document.documentElement.getAttribute("data-theme") === "dark"
       ? "dark"
@@ -163,19 +157,74 @@ function toggleLang() {
 }
 
 // ---------- Theme (light/dark only — Option 1) ----------
-function applyTheme() {
+function commitTheme() {
   document.documentElement.setAttribute("data-theme", state.theme);
   const btn = document.getElementById("theme-toggle");
   if (btn) btn.setAttribute("aria-pressed", String(state.theme === "dark"));
 }
 
-function toggleTheme() {
-  // Explicit choice: flip and persist (wins over the browser from now on).
-  state.theme = state.theme === "dark" ? "light" : "dark";
+function applyTheme() {
+  commitTheme();
+}
+
+// GESTO NUEVO — wipe de tema.
+// El toggle es ocasional (no 100×/día) → se permite deleite.
+// Revelado circular con clip-path expandiéndose desde el centro
+// del botón hasta cubrir el viewport. WAAPI = GPU + interrumpible,
+// sin librerías. Si no hay View Transitions o el usuario pidió
+// menos movimiento, conmuta al instante (como producción).
+function toggleTheme(ev) {
+  const next = state.theme === "dark" ? "light" : "dark";
+  state.theme = next;
   try {
-    localStorage.setItem(STORAGE_KEYS.theme, state.theme);
+    localStorage.setItem(STORAGE_KEYS.theme, next);
   } catch {}
-  applyTheme();
+
+  const canAnimate =
+    typeof document.startViewTransition === "function" &&
+    !prefersReducedMotion.matches;
+
+  if (!canAnimate) {
+    commitTheme();
+    return;
+  }
+
+  // Origen del wipe = centro del botón (origin-aware). Si no hay
+  // evento (teclado), nace de la esquina superior derecha del
+  // toolbar, que es donde vive el control.
+  const btn = document.getElementById("theme-toggle");
+  const rect = btn?.getBoundingClientRect();
+  const cx = rect ? rect.left + rect.width / 2 : window.innerWidth - 40;
+  const cy = rect ? rect.top + rect.height / 2 : 40;
+
+  const endRadius = Math.hypot(
+    Math.max(cx, window.innerWidth - cx),
+    Math.max(cy, window.innerHeight - cy)
+  );
+
+  const transition = document.startViewTransition(() => {
+    commitTheme();
+  });
+
+  transition.ready
+    .then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${cx}px ${cy}px)`,
+            `circle(${endRadius}px at ${cx}px ${cy}px)`,
+          ],
+        },
+        {
+          // El tema es un cambio grande de pantalla → ease-in-out
+          // fuerte, ~420ms. Bajo el techo de "drawer".
+          duration: 440,
+          easing: "cubic-bezier(0.77, 0, 0.175, 1)",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    })
+    .catch(() => {});
 }
 
 // ---------- WhatsApp ----------
@@ -190,8 +239,6 @@ function openWhatsApp() {
 }
 
 // ---------- Email ----------
-// Address is reconstructed from data-email-user and data-email-host so
-// no literal "user@host" string lives in the static HTML.
 function bindEmail() {
   document
     .querySelectorAll("[data-email-user][data-email-host]")
@@ -209,8 +256,6 @@ function bindEmail() {
 }
 
 // ---------- QR popover (collision-aware) ----------
-// Default above the chip; flip below if it would overlap the sticky
-// topbar. Only present on the home page.
 function bindQrPopover() {
   const qd = document.getElementById("qd-crypto");
   const topbar = document.querySelector(".topbar");
@@ -236,16 +281,29 @@ function bindQrPopover() {
 }
 
 // ---------- Copy buttons (crypto page) ----------
+// El label cambia bajo blur: en lugar de ver dos textos cruzándose
+// ("Copiar dirección" ↔ "Copiado ✓"), el ojo percibe un solo
+// objeto que muta. Blur < 20px, barato.
 function bindCopy() {
   document.querySelectorAll("[data-copy]").forEach((b) => {
+    const label = b.querySelector("span") || b;
     b.addEventListener("click", () => {
       const src = document.getElementById(b.getAttribute("data-copy"));
       if (!src || !navigator.clipboard) return;
       navigator.clipboard.writeText(src.textContent.trim()).then(() => {
-        const prev = b.textContent;
-        b.textContent = state.lang === "es" ? "Copiado ✓" : "Copied ✓";
+        const prev = label.textContent;
+        b.classList.add("is-swapping");
+        // A mitad del blur (cuando el texto es ilegible) se cambia.
         setTimeout(() => {
-          b.textContent = prev;
+          label.textContent = state.lang === "es" ? "Copiado ✓" : "Copied ✓";
+          b.classList.remove("is-swapping");
+        }, 180);
+        setTimeout(() => {
+          b.classList.add("is-swapping");
+          setTimeout(() => {
+            label.textContent = prev;
+            b.classList.remove("is-swapping");
+          }, 180);
         }, 1600);
       });
     });
@@ -264,7 +322,6 @@ function layoutWallet() {
   const panelsEl = document.querySelector(".panels");
   if (!panelsEl || cards.length === 0) return;
 
-  // Desktop: clear inline transforms so flex accordion runs cleanly.
   if (!mobileMq.matches) {
     cards.forEach((c) => c.style.removeProperty("--y"));
     return;
@@ -274,7 +331,6 @@ function layoutWallet() {
   const tabH = parseFloat(styles.getPropertyValue("--tab-h-mobile")) || 64;
   const totalH = panelsEl.clientHeight;
   const stackedTabsH = cards.length * tabH;
-  // Floor at 240px so the active card has room even on small viewports.
   const contentH = Math.max(totalH - stackedTabsH, 240);
 
   const activeAttr = panelsEl.dataset.activeIndex;
@@ -311,9 +367,9 @@ function bindPanels() {
     const tab = panel.querySelector(".panel-tab");
     if (!tab) return;
     tab.addEventListener("click", () => {
-      if (mobileMq.matches) {
-        setActivePanel(Number(panel.dataset.index));
-      }
+      // Móvil: wallet stack. Desktop: tap-to-expand para tablets
+      // táctiles ≥768px (el hover quedó gated tras pointer:fine).
+      setActivePanel(Number(panel.dataset.index));
     });
   });
 }

@@ -21,8 +21,7 @@
       href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231a1612'/><text x='16' y='22' text-anchor='middle' font-family='Georgia, serif' font-style='italic' font-weight='600' font-size='18' fill='%23f5f1e8'>px</text></svg>"
     />
 
-    <!-- Same no-flash bootstrap as the home page: theme is light/dark
-         only (Option 1); lang persists and mirrors to ?lang=en. -->
+    <!-- Same no-flash bootstrap (preservado intacto). -->
     <script>
       (function () {
         try {
@@ -66,27 +65,34 @@
         <a class="btn btn-lang-link" href="/" data-i18n="crypto.back">← Volver</a>
         <button
           id="theme-toggle"
-          class="btn btn-icon"
+          class="btn btn-lang"
           type="button"
           data-i18n-aria="a11y.theme"
           aria-label="Cambiar tema"
         >
-          <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="4" fill="currentColor" />
-            <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <line x1="12" y1="2" x2="12" y2="5" />
-              <line x1="12" y1="19" x2="12" y2="22" />
-              <line x1="2" y1="12" x2="5" y2="12" />
-              <line x1="19" y1="12" x2="22" y2="12" />
-              <line x1="4.5" y1="4.5" x2="6.6" y2="6.6" />
-              <line x1="17.4" y1="17.4" x2="19.5" y2="19.5" />
-              <line x1="4.5" y1="19.5" x2="6.6" y2="17.4" />
-              <line x1="17.4" y1="6.6" x2="19.5" y2="4.5" />
-            </g>
-          </svg>
-          <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
-          </svg>
+          <span class="lang-seg">
+            <span class="theme-opt" data-theme-opt="light">
+              <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" fill="currentColor" />
+                <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="12" y1="2" x2="12" y2="5" />
+                  <line x1="12" y1="19" x2="12" y2="22" />
+                  <line x1="2" y1="12" x2="5" y2="12" />
+                  <line x1="19" y1="12" x2="22" y2="12" />
+                  <line x1="4.5" y1="4.5" x2="6.6" y2="6.6" />
+                  <line x1="17.4" y1="17.4" x2="19.5" y2="19.5" />
+                  <line x1="4.5" y1="19.5" x2="6.6" y2="17.4" />
+                  <line x1="17.4" y1="6.6" x2="19.5" y2="4.5" />
+                </g>
+              </svg>
+            </span>
+            <span class="lang-div" aria-hidden="true">·</span>
+            <span class="theme-opt" data-theme-opt="dark">
+              <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+              </svg>
+            </span>
+          </span>
         </button>
         <button
           id="lang-toggle"
@@ -95,7 +101,20 @@
           data-i18n-aria="a11y.lang"
           aria-label="Cambiar idioma"
         >
-          <span class="lang-current">ES</span>
+          <svg class="lang-globe" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7" />
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              d="M3 12h18M12 3c2.7 2.7 2.7 15.3 0 18M12 3c-2.7 2.7-2.7 15.3 0 18"
+            />
+          </svg>
+          <span class="lang-seg">
+            <span class="lang-opt" data-lang="es">ES</span>
+            <span class="lang-div" aria-hidden="true">·</span>
+            <span class="lang-opt" data-lang="en">EN</span>
+          </span>
         </button>
       </nav>
     </header>
@@ -124,8 +143,8 @@
           <span class="addr-net">Bitcoin · BTC</span>
           <code class="addr-val" id="btc">bc1qln7tqyllrw0qcg4lchedvsds697qylwc8s5ll8</code>
           <div class="addr-actions">
-            <button class="btn-copy" type="button" data-copy="btc" data-i18n="crypto.copy">
-              Copiar dirección
+            <button class="btn-copy" type="button" data-copy="btc">
+              <span data-i18n="crypto.copy">Copiar dirección</span>
             </button>
           </div>
           <p class="addr-note" data-i18n="crypto.btcNet">
@@ -147,8 +166,8 @@
           <span class="addr-net">Ethereum · ETH</span>
           <code class="addr-val" id="eth">0x7154Db14fa02F4d873eD93fe9E8017B2FD77Ec56</code>
           <div class="addr-actions">
-            <button class="btn-copy" type="button" data-copy="eth" data-i18n="crypto.copy">
-              Copiar dirección
+            <button class="btn-copy" type="button" data-copy="eth">
+              <span data-i18n="crypto.copy">Copiar dirección</span>
             </button>
           </div>
           <p class="addr-note" data-i18n="crypto.ethNet">

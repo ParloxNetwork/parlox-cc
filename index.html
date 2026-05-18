@@ -27,19 +27,13 @@
     <meta name="theme-color" content="#f5f1e8" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0e0c0a" media="(prefers-color-scheme: dark)" />
 
-    <!-- Inline SVG favicon: italic "px" wordmark in a warm dark plate.
-         The system serif fallback (Georgia) keeps the glyph crisp at
-         16/32px even before any web font loads. -->
     <link
       rel="icon"
       type="image/svg+xml"
       href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231a1612'/><text x='16' y='22' text-anchor='middle' font-family='Georgia, serif' font-style='italic' font-weight='600' font-size='18' fill='%23f5f1e8'>px</text></svg>"
     />
 
-    <!-- Inline no-flash bootstrap: applies persisted theme/lang BEFORE
-         the stylesheet paints, eliminating FOUC. Theme is light/dark
-         only (Option 1): no stored choice -> follow the browser this
-         load; an explicit toggle persists and wins from then on. -->
+    <!-- Inline no-flash bootstrap (preservado intacto). -->
     <script>
       (function () {
         try {
@@ -102,27 +96,34 @@
         </button>
         <button
           id="theme-toggle"
-          class="btn btn-icon"
+          class="btn btn-lang"
           type="button"
           data-i18n-aria="a11y.theme"
           aria-label="Cambiar tema"
         >
-          <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="4" fill="currentColor" />
-            <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <line x1="12" y1="2" x2="12" y2="5" />
-              <line x1="12" y1="19" x2="12" y2="22" />
-              <line x1="2" y1="12" x2="5" y2="12" />
-              <line x1="19" y1="12" x2="22" y2="12" />
-              <line x1="4.5" y1="4.5" x2="6.6" y2="6.6" />
-              <line x1="17.4" y1="17.4" x2="19.5" y2="19.5" />
-              <line x1="4.5" y1="19.5" x2="6.6" y2="17.4" />
-              <line x1="17.4" y1="6.6" x2="19.5" y2="4.5" />
-            </g>
-          </svg>
-          <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
-          </svg>
+          <span class="lang-seg">
+            <span class="theme-opt" data-theme-opt="light">
+              <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" fill="currentColor" />
+                <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="12" y1="2" x2="12" y2="5" />
+                  <line x1="12" y1="19" x2="12" y2="22" />
+                  <line x1="2" y1="12" x2="5" y2="12" />
+                  <line x1="19" y1="12" x2="22" y2="12" />
+                  <line x1="4.5" y1="4.5" x2="6.6" y2="6.6" />
+                  <line x1="17.4" y1="17.4" x2="19.5" y2="19.5" />
+                  <line x1="4.5" y1="19.5" x2="6.6" y2="17.4" />
+                  <line x1="17.4" y1="6.6" x2="19.5" y2="4.5" />
+                </g>
+              </svg>
+            </span>
+            <span class="lang-div" aria-hidden="true">·</span>
+            <span class="theme-opt" data-theme-opt="dark">
+              <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+              </svg>
+            </span>
+          </span>
         </button>
         <button
           id="lang-toggle"
@@ -131,7 +132,20 @@
           data-i18n-aria="a11y.lang"
           aria-label="Cambiar idioma"
         >
-          <span class="lang-current">ES</span>
+          <svg class="lang-globe" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7" />
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              d="M3 12h18M12 3c2.7 2.7 2.7 15.3 0 18M12 3c-2.7 2.7-2.7 15.3 0 18"
+            />
+          </svg>
+          <span class="lang-seg">
+            <span class="lang-opt" data-lang="es">ES</span>
+            <span class="lang-div" aria-hidden="true">·</span>
+            <span class="lang-opt" data-lang="en">EN</span>
+          </span>
         </button>
       </nav>
     </header>
@@ -204,8 +218,6 @@
               </span>
               <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
             </button>
-            <!-- Brand banner: real Parlox Network logo (RESERVED asset,
-                 assets/reserved/, brand red baked in). -->
             <div class="panel-banner" aria-hidden="true">
               <img src="assets/reserved/parlox-network.svg" alt="" />
             </div>
@@ -235,8 +247,6 @@
               </span>
               <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
             </button>
-            <!-- POC motif (cross) — placeholder; real Cafecito brand
-                 SVG will be a reserved asset. -->
             <div class="panel-banner" aria-hidden="true">
               <svg viewBox="0 0 100 140"><path fill="currentColor" d="M42 8h16v34h34v16H58v74H42V58H8V42h34z"/></svg>
             </div>
@@ -270,8 +280,6 @@
               </span>
               <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
             </button>
-            <!-- POC motif (open book) — placeholder; real Cedesco brand
-                 SVG will be a reserved asset. -->
             <div class="panel-banner" aria-hidden="true">
               <svg viewBox="0 0 140 100"><path fill="currentColor" d="M70 18C54 6 30 6 12 14v74c18-7 42-7 58 5 16-12 40-12 58-5V14C110 6 86 6 70 18m-6 13v55c-14-7-32-7-46-3V28c14-5 32-4 46 3m12 0c14-7 32-6 46-3v55c-14-4-32-4-46 3z"/></svg>
             </div>
@@ -301,8 +309,6 @@
               </span>
               <span class="panel-status" data-state="proximo" data-i18n="status.proximo">próximo</span>
             </button>
-            <!-- POC motif (sprout) — placeholder; real Educalisa brand
-                 SVG will be a reserved asset. -->
             <div class="panel-banner" aria-hidden="true">
               <svg viewBox="0 0 120 130"><path d="M60 124V70m0 0C60 44 40 30 14 30c0 28 18 44 46 40m0-6c0-26 20-42 46-42 0 28-18 44-46 42" stroke="currentColor" stroke-width="9" fill="none" stroke-linecap="round"/></svg>
             </div>
@@ -333,8 +339,6 @@
               </span>
               <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
             </button>
-            <!-- POC motif (chapel/arch) — placeholder; real Alianza
-                 República brand SVG will be a reserved asset. -->
             <div class="panel-banner" aria-hidden="true">
               <svg viewBox="0 0 120 130"><path fill="currentColor" d="M60 6 16 36v88h28V84a16 16 0 0 1 32 0v40h28V36zM52 50h16v16H52z"/></svg>
             </div>
