@@ -172,18 +172,26 @@ body::before{
 :root[data-theme="light"] .theme-opt[data-theme-opt="light"],
 :root[data-theme="dark"]  .theme-opt[data-theme-opt="dark"]{color:var(--fg)}
 
-/* min-height = viewport menos topbar: el contenido ocupa el primer
-   pliegue y el footer queda empujado debajo, visible sólo al hacer
-   scroll. Usamos lvh (large viewport) en vez de dvh porque Chrome
-   móvil tiene quirks con dvh durante las transiciones del URL bar;
-   lvh garantiza el push en cualquier estado del chrome. */
+/* Base (móvil): .page se mide por contenido, sin flex-grow ni
+   min-height. El footer cae inmediatamente después del wallet en
+   el flujo natural, sin que el card del fondo extienda su color
+   hasta la zona del footer (efecto "flotando" que reportaba móvil).
+   En desktop el @media lo restaura a flex-grow + min-height para
+   empujar el footer fuera del fold. */
 .page{
-  flex:1 1 auto;width:100%;max-width:var(--container);margin:0 auto;
+  width:100%;max-width:var(--container);margin:0 auto;
   padding:var(--space-6) var(--space-5) var(--space-5);
   display:flex;flex-direction:column;gap:var(--space-6);
-  min-height:calc(100lvh - var(--topbar-h));position:relative;z-index:2;
+  position:relative;z-index:2;
 }
-@media (min-width:768px){.page{padding:var(--space-8) var(--space-6) var(--space-6);gap:var(--space-8)}}
+@media (min-width:768px){
+  .page{
+    flex:1 1 auto;
+    min-height:calc(100lvh - var(--topbar-h));
+    padding:var(--space-8) var(--space-6) var(--space-6);
+    gap:var(--space-8);
+  }
+}
 
 /* ====================================================
    HERO — obertura contenida (la personalidad va abajo)
@@ -295,13 +303,15 @@ body::before{
    Móvil: wallet stack (JS pone --y). Desktop: acordeón.
    ==================================================== */
 .directory{flex:1 1 auto;display:flex;min-height:0;position:relative;z-index:1}
-/* Móvil: el wallet llena el alto disponible bajo el hero y recorta
-   lo que sobre, así ninguna tarjeta se derrama sobre el footer. El
-   footer queda como bloque limpio justo después (se ve al hacer
-   scroll). El piso de min-height evita que se aplaste de más. */
+/* Móvil: altura FIJA del wallet (5 tabs + 240px de holgura para el
+   contenido del card abierto — coincide con el contentH mínimo de
+   la JS en layoutWallet()). Sin esto, .panels heredaba el alto del
+   padre y el card del fondo extendía su color de marca hasta el
+   borde del .page, dando la sensación de que el footer "flotaba"
+   sobre las tarjetas. El @media de desktop sobreescribe a 100%. */
 .panels{
-  position:relative;width:100%;height:100%;
-  min-height:calc(5 * var(--tab-h-mobile) + 220px);
+  position:relative;width:100%;
+  height:calc(5 * var(--tab-h-mobile) + 240px);
   overflow:hidden;
 }
 
