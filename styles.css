@@ -167,14 +167,16 @@ body::before{
 :root[data-theme="light"] .theme-opt[data-theme-opt="light"],
 :root[data-theme="dark"]  .theme-opt[data-theme-opt="dark"]{color:var(--fg)}
 
-/* min-height = viewport menos topbar: el contenido principal ocupa
-   exactamente el primer pliegue y el footer queda empujado debajo,
-   visible solo al hacer scroll. */
+/* min-height = viewport menos topbar: el contenido ocupa el primer
+   pliegue y el footer queda empujado debajo, visible sólo al hacer
+   scroll. Usamos lvh (large viewport) en vez de dvh porque Chrome
+   móvil tiene quirks con dvh durante las transiciones del URL bar;
+   lvh garantiza el push en cualquier estado del chrome. */
 .page{
   flex:1 1 auto;width:100%;max-width:var(--container);margin:0 auto;
   padding:var(--space-6) var(--space-5) var(--space-5);
   display:flex;flex-direction:column;gap:var(--space-6);
-  min-height:calc(100dvh - var(--topbar-h));position:relative;z-index:2;
+  min-height:calc(100lvh - var(--topbar-h));position:relative;z-index:2;
 }
 @media (min-width:768px){.page{padding:var(--space-8) var(--space-6) var(--space-6);gap:var(--space-8)}}
 
