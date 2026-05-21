@@ -9,10 +9,15 @@
 
 *,*::before,*::after{box-sizing:border-box}
 *{margin:0;padding:0}
-html,body{height:100%}
-/* Reserva el carril de la scrollbar siempre — evita el shift de
-   ~17px entre páginas con/sin overflow vertical. */
-html{scrollbar-gutter:stable}
+body{height:100%}
+/* html anclado a 100lvh (alto máximo posible, con chrome del browser
+   oculto) para que body{height:100%} resuelva al alto MÁS GRANDE en
+   cualquier estado del URL bar. Sin esto, Chrome móvil deja un hueco
+   debajo del footer cuando el URL bar se colapsa al scrollear: el
+   body se quedó atado al viewport inicial (más chico). scrollbar-
+   gutter:stable reserva el carril siempre para evitar shift de ~17px
+   entre páginas con/sin overflow vertical. */
+html{height:100lvh;scrollbar-gutter:stable}
 ul{list-style:none}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
