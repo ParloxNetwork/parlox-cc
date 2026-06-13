@@ -618,6 +618,14 @@ body.intro-skip .overture{transition:none}
   .ov-eyebrow{display:none}
 }
 @media (max-width:759.98px){
+  /* Phones: let the home grow and scroll a touch rather than squeezing
+     the cards — the fr rows were clipping the brand names. Each card now
+     sizes to its own content (min 116px) so nothing is cut off. */
+  html{height:auto}
+  body{height:auto;min-height:100dvh;overflow-x:hidden;overflow-y:auto}
+  .page{min-height:0}
+  .mosaic-wrap{flex:0 0 auto}
+  .mosaic{flex:0 0 auto;grid-template-rows:repeat(4,minmax(116px,auto))}
   .overture{flex-direction:column;align-items:flex-start;gap:var(--space-3)}
   .quick-data{width:100%}
 }
