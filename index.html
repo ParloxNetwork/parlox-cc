@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="dark light" />
 
     <title>@parlox — Jonathan Ricardo Proaño Alcívar</title>
     <meta
@@ -24,24 +24,26 @@
     <meta property="og:url" content="https://parlox.cc/" />
     <meta name="twitter:card" content="summary" />
 
-    <meta name="theme-color" content="#f5f1e8" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0e0c0a" media="(prefers-color-scheme: dark)" />
+    <!-- Dark-first canvas is the hero; theme-color metas track both modes. -->
+    <meta name="theme-color" content="#08070a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)" />
 
     <link
       rel="icon"
       type="image/svg+xml"
-      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231a1612'/><text x='16' y='22' text-anchor='middle' font-family='Georgia, serif' font-style='italic' font-weight='600' font-size='18' fill='%23f5f1e8'>px</text></svg>"
+      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2308070a'/><text x='16' y='22' text-anchor='middle' font-family='Georgia, serif' font-style='italic' font-weight='600' font-size='18' fill='%23f4f1ea'>px</text></svg>"
     />
 
-    <!-- Inline no-flash bootstrap (preservado intacto). -->
+    <!-- No-flash bootstrap: resolve theme + lang before paint.
+         localStorage > ?lang= query > prefers-color-scheme / navigator. -->
     <script>
       (function () {
         try {
           var t = localStorage.getItem("parlox.theme");
           if (t !== "light" && t !== "dark")
-            t = matchMedia("(prefers-color-scheme: dark)").matches
-              ? "dark"
-              : "light";
+            t = matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark";
           document.documentElement.setAttribute("data-theme", t);
           var url = new URL(location.href);
           var l =
@@ -57,8 +59,11 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Big-Shoulders Display: a condensed, structural display face that
+         reads as kinetic machinery; Sometype Mono for technical labels;
+         Instrument Sans as the single sans body system. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..600&family=DM+Sans:opsz,wght@9..40,400..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:opsz,wght@10..72,500..800&family=Sometype+Mono:ital,wght@0,400..600;1,400&family=Instrument+Sans:wght@400..700&display=swap"
       rel="stylesheet"
     />
 
@@ -76,8 +81,22 @@
     </script>
   </head>
 
-  <body>
+  <body data-front="">
     <a class="skip-link" href="#main" data-i18n="a11y.skip">Saltar al contenido</a>
+
+    <!-- Cinematic backdrop that floods with the active front's color. -->
+    <div class="stage" aria-hidden="true">
+      <div class="stage-flood"></div>
+      <span class="stage-numeral" id="stage-numeral"></span>
+    </div>
+
+    <!-- Kinetic intro overlay: the big name holds briefly, then settles. -->
+    <div class="intro" id="intro" aria-hidden="true">
+      <span class="intro-name">
+        Jonathan Proaño
+        <span class="intro-handle">@parlox</span>
+      </span>
+    </div>
 
     <header class="topbar">
       <a class="mark" href="/" aria-label="parlox.cc">
@@ -94,6 +113,7 @@
           </svg>
           <span data-i18n="contact">Contáctame</span>
         </button>
+
         <button
           id="theme-toggle"
           class="btn btn-lang"
@@ -125,6 +145,7 @@
             </span>
           </span>
         </button>
+
         <button
           id="lang-toggle"
           class="btn btn-lang"
@@ -151,16 +172,26 @@
     </header>
 
     <main id="main" class="page">
-      <section class="hero">
-        <h1 class="hero-name">Jonathan Ricardo Proaño Alcívar</h1>
-        <p class="hero-tagline" data-i18n="tagline">Cinco frentes, una vocación.</p>
+      <!-- ===== OVERTURE (resting minimal identity band) ===== -->
+      <section class="overture" id="overture" aria-label="Identidad">
+        <div class="ov-id">
+          <span class="ov-eyebrow">
+            <span class="tick" aria-hidden="true"></span>
+            <span data-i18n="tagline">Cinco frentes, una vocación.</span>
+          </span>
+          <span class="ov-namerow">
+            <h1 class="ov-name">Jonathan Ricardo Proaño Alcívar</h1>
+            <span class="ov-handle">@parlox</span>
+          </span>
+        </div>
+
         <p class="quick-data" aria-label="Datos de contacto y verificación">
           <a
             class="qd-item qd-handle"
             href="https://www.linkedin.com/in/parlox/"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="LinkedIn — parlox"
+            aria-label="LinkedIn / parlox"
           >
             <svg class="qd-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
               <path
@@ -171,7 +202,6 @@
             <span class="qd-slash" aria-hidden="true">/</span>
             <span>parlox</span>
           </a>
-          <span class="qd-sep" aria-hidden="true">·</span>
 
           <span class="qd-item">
             <span class="qd-label">Email</span>
@@ -183,7 +213,6 @@
               >&nbsp;</a
             >
           </span>
-          <span class="qd-sep" aria-hidden="true">·</span>
 
           <span class="qd-item qd-crypto" id="qd-crypto">
             <span class="qd-label">BTC</span>
@@ -205,7 +234,6 @@
               >
             </span>
           </span>
-          <span class="qd-sep" aria-hidden="true">·</span>
 
           <span class="qd-item">
             <span class="qd-label">PGP</span>
@@ -219,161 +247,165 @@
         </p>
       </section>
 
-      <section class="directory" aria-label="Áreas de trabajo">
-        <ul class="panels" data-active-index="">
-          <li class="panel" data-area="tech" data-index="0">
-            <button
-              class="panel-tab"
-              type="button"
-              aria-expanded="false"
-              aria-controls="content-tech"
-            >
-              <span class="panel-tab-left">
-                <span class="panel-area" data-i18n="area.tech">Tecnología</span>
+      <!-- ===== MOSAIC · the five fronts ARE the page ===== -->
+      <section class="mosaic-wrap" aria-label="Áreas de trabajo">
+        <h2 class="visually-hidden" data-i18n="directory.title">Los cinco frentes</h2>
+        <div class="mosaic" role="group" aria-label="Frentes">
+          <!-- 01 · Technology — the tall feature cell -->
+          <div
+            class="cell cell-tech"
+            style="--c:var(--tech)"
+            role="button"
+            tabindex="0"
+            data-front="tech"
+            data-numeral="1"
+            aria-pressed="false"
+          >
+            <span class="cell-numeral" aria-hidden="true">1</span>
+            <span class="cell-glyph" aria-hidden="true"></span>
+            <span class="cell-inner">
+              <span class="cell-top">
+                <span class="cell-index" aria-hidden="true">01</span>
+                <span class="cell-status" data-i18n="status.activo">activo</span>
               </span>
-              <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
-            </button>
-            <div class="panel-banner" aria-hidden="true">
-              <img src="assets/reserved/parlox-network.svg" alt="" />
-            </div>
-            <div class="panel-content" id="content-tech">
-              <span class="panel-kicker" data-i18n="desc.tech">Tecnología y desarrollo</span>
-              <h2 class="panel-brand">Parlox Network</h2>
-              <p class="panel-slogan" data-i18n="slogan.tech">Conectados logramos más.</p>
-              <a
-                class="panel-link"
-                href="https://parlox.net"
-                target="_blank"
-                rel="noopener noreferrer"
-                >parlox.net <span class="arrow" aria-hidden="true">→</span></a
-              >
-            </div>
-          </li>
+              <span class="cell-foot">
+                <span class="cell-area" data-i18n="area.tech">Tecnología</span>
+                <span class="cell-brand">Parlox Network</span>
+                <span class="cell-moment" aria-hidden="true">
+                  <span class="cell-slogan"></span>
+                  <a class="cell-link" tabindex="-1" rel="noopener noreferrer">
+                    <span class="cell-link-label"></span>
+                    <span class="arrow" aria-hidden="true">→</span>
+                  </a>
+                </span>
+              </span>
+            </span>
+          </div>
 
-          <li class="panel" data-area="theo" data-index="1">
-            <button
-              class="panel-tab"
-              type="button"
-              aria-expanded="false"
-              aria-controls="content-theo"
-            >
-              <span class="panel-tab-left">
-                <span class="panel-area" data-i18n="area.theo">Teología</span>
+          <!-- 02 · Theology -->
+          <div
+            class="cell cell-theo"
+            style="--c:var(--theo)"
+            role="button"
+            tabindex="0"
+            data-front="theo"
+            data-numeral="2"
+            aria-pressed="false"
+          >
+            <span class="cell-numeral" aria-hidden="true">2</span>
+            <span class="cell-glyph" aria-hidden="true"></span>
+            <span class="cell-inner">
+              <span class="cell-top">
+                <span class="cell-index" aria-hidden="true">02</span>
+                <span class="cell-status" data-i18n="status.activo">activo</span>
               </span>
-              <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
-            </button>
-            <div class="panel-banner" aria-hidden="true">
-              <svg viewBox="0 0 100 140"><path fill="currentColor" d="M42 8h16v34h34v16H58v74H42V58H8V42h34z"/></svg>
-            </div>
-            <div class="panel-content" id="content-theo">
-              <span class="panel-kicker" data-i18n="desc.theo"
-                >Teología, divulgación y ministerio</span
-              >
-              <h2 class="panel-brand">Cafecito Teológico</h2>
-              <p class="panel-slogan" data-i18n="slogan.theo">
-                Conversemos de Dios y la Biblia mientras tomamos un cafecito.
-              </p>
-              <a
-                class="panel-link"
-                href="https://cafecito.cc"
-                target="_blank"
-                rel="noopener noreferrer"
-                >cafecito.cc <span class="arrow" aria-hidden="true">→</span></a
-              >
-            </div>
-          </li>
+              <span class="cell-foot">
+                <span class="cell-area" data-i18n="area.theo">Teología</span>
+                <span class="cell-brand">Cafecito Teológico</span>
+                <span class="cell-moment" aria-hidden="true">
+                  <span class="cell-slogan"></span>
+                  <a class="cell-link" tabindex="-1" rel="noopener noreferrer">
+                    <span class="cell-link-label"></span>
+                    <span class="arrow" aria-hidden="true">→</span>
+                  </a>
+                </span>
+              </span>
+            </span>
+          </div>
 
-          <li class="panel" data-area="edu" data-index="2">
-            <button
-              class="panel-tab"
-              type="button"
-              aria-expanded="false"
-              aria-controls="content-edu"
-            >
-              <span class="panel-tab-left">
-                <span class="panel-area" data-i18n="area.edu">Educación</span>
+          <!-- 03 · Education -->
+          <div
+            class="cell cell-edu"
+            style="--c:var(--edu)"
+            role="button"
+            tabindex="0"
+            data-front="edu"
+            data-numeral="3"
+            aria-pressed="false"
+          >
+            <span class="cell-numeral" aria-hidden="true">3</span>
+            <span class="cell-glyph" aria-hidden="true"></span>
+            <span class="cell-inner">
+              <span class="cell-top">
+                <span class="cell-index" aria-hidden="true">03</span>
+                <span class="cell-status" data-i18n="status.activo">activo</span>
               </span>
-              <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
-            </button>
-            <div class="panel-banner" aria-hidden="true">
-              <svg viewBox="0 0 140 100"><path fill="currentColor" d="M70 18C54 6 30 6 12 14v74c18-7 42-7 58 5 16-12 40-12 58-5V14C110 6 86 6 70 18m-6 13v55c-14-7-32-7-46-3V28c14-5 32-4 46 3m12 0c14-7 32-6 46-3v55c-14-4-32-4-46 3z"/></svg>
-            </div>
-            <div class="panel-content" id="content-edu">
-              <span class="panel-kicker" data-i18n="desc.edu"
-                >Nivelación, asesoría educativa y formación</span
-              >
-              <h2 class="panel-brand">Cedesco Academia</h2>
-              <p class="panel-slogan" data-i18n="slogan.edu">
-                Nivelación y asesoría educativa.
-              </p>
-              <a class="panel-link" href="#" rel="noopener noreferrer"
-                >@cedes <span class="arrow" aria-hidden="true">→</span></a
-              >
-            </div>
-          </li>
+              <span class="cell-foot">
+                <span class="cell-area" data-i18n="area.edu">Educación</span>
+                <span class="cell-brand">Cedesco Academia</span>
+                <span class="cell-moment" aria-hidden="true">
+                  <span class="cell-slogan"></span>
+                  <a class="cell-link" tabindex="-1" rel="noopener noreferrer">
+                    <span class="cell-link-label"></span>
+                    <span class="arrow" aria-hidden="true">→</span>
+                  </a>
+                </span>
+              </span>
+            </span>
+          </div>
 
-          <li class="panel" data-area="found" data-index="3">
-            <button
-              class="panel-tab"
-              type="button"
-              aria-expanded="false"
-              aria-controls="content-found"
-            >
-              <span class="panel-tab-left">
-                <span class="panel-area" data-i18n="area.found">Fundación</span>
+          <!-- 04 · Foundation -->
+          <div
+            class="cell cell-found"
+            style="--c:var(--found)"
+            role="button"
+            tabindex="0"
+            data-front="found"
+            data-numeral="4"
+            aria-pressed="false"
+          >
+            <span class="cell-numeral" aria-hidden="true">4</span>
+            <span class="cell-glyph" aria-hidden="true"></span>
+            <span class="cell-inner">
+              <span class="cell-top">
+                <span class="cell-index" aria-hidden="true">04</span>
+                <span class="cell-status" data-i18n="status.proximo">próximo</span>
               </span>
-              <span class="panel-status" data-state="proximo" data-i18n="status.proximo">próximo</span>
-            </button>
-            <div class="panel-banner" aria-hidden="true">
-              <svg viewBox="0 0 120 130"><path d="M60 124V70m0 0C60 44 40 30 14 30c0 28 18 44 46 40m0-6c0-26 20-42 46-42 0 28-18 44-46 42" stroke="currentColor" stroke-width="9" fill="none" stroke-linecap="round"/></svg>
-            </div>
-            <div class="panel-content" id="content-found">
-              <span class="panel-kicker" data-i18n="desc.found"
-                >Fundación de impacto social</span
-              >
-              <h2 class="panel-brand">Educalisa</h2>
-              <p class="panel-slogan" data-i18n="slogan.found">
-                Por una educación libre y saludable.
-              </p>
-              <a class="panel-link" href="#" rel="noopener noreferrer"
-                ><span data-i18n="link.soon">próximamente</span>
-                <span class="arrow" aria-hidden="true">→</span></a
-              >
-            </div>
-          </li>
+              <span class="cell-foot">
+                <span class="cell-area" data-i18n="area.found">Fundación</span>
+                <span class="cell-brand">Educalisa</span>
+                <span class="cell-moment" aria-hidden="true">
+                  <span class="cell-slogan"></span>
+                  <a class="cell-link" tabindex="-1" rel="noopener noreferrer">
+                    <span class="cell-link-label"></span>
+                    <span class="arrow" aria-hidden="true">→</span>
+                  </a>
+                </span>
+              </span>
+            </span>
+          </div>
 
-          <li class="panel" data-area="min" data-index="4">
-            <button
-              class="panel-tab"
-              type="button"
-              aria-expanded="false"
-              aria-controls="content-min"
-            >
-              <span class="panel-tab-left">
-                <span class="panel-area" data-i18n="area.min">Iglesia local</span>
+          <!-- 05 · Local church (navy is a parlox.cc-only treatment) -->
+          <div
+            class="cell cell-min"
+            style="--c:var(--min)"
+            role="button"
+            tabindex="0"
+            data-front="min"
+            data-numeral="5"
+            aria-pressed="false"
+          >
+            <span class="cell-numeral" aria-hidden="true">5</span>
+            <span class="cell-glyph" aria-hidden="true"></span>
+            <span class="cell-inner">
+              <span class="cell-top">
+                <span class="cell-index" aria-hidden="true">05</span>
+                <span class="cell-status" data-i18n="status.activo">activo</span>
               </span>
-              <span class="panel-status" data-state="activo" data-i18n="status.activo">activo</span>
-            </button>
-            <div class="panel-banner" aria-hidden="true">
-              <svg viewBox="0 0 120 130"><path fill="currentColor" d="M60 6 16 36v88h28V84a16 16 0 0 1 32 0v40h28V36zM52 50h16v16H52z"/></svg>
-            </div>
-            <div class="panel-content" id="content-min">
-              <span class="panel-kicker" data-i18n="desc.min">Iglesia local</span>
-              <h2 class="panel-brand">Alianza República</h2>
-              <p class="panel-slogan" data-i18n="slogan.min">
-                Una familia que glorifica a Dios.
-              </p>
-              <a
-                class="panel-link"
-                href="https://alianzarepublica.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                >alianzarepublica.org
-                <span class="arrow" aria-hidden="true">→</span></a
-              >
-            </div>
-          </li>
-        </ul>
+              <span class="cell-foot">
+                <span class="cell-area" data-i18n="area.min">Iglesia local</span>
+                <span class="cell-brand">Alianza República</span>
+                <span class="cell-moment" aria-hidden="true">
+                  <span class="cell-slogan"></span>
+                  <a class="cell-link" tabindex="-1" rel="noopener noreferrer">
+                    <span class="cell-link-label"></span>
+                    <span class="arrow" aria-hidden="true">→</span>
+                  </a>
+                </span>
+              </span>
+            </span>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -381,12 +413,7 @@
       <p class="bottombar-text">
         <span class="bb-segment">
           <span data-i18n="footer.made">Hecho con</span>
-          <svg
-            class="footer-heart"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            focusable="false"
-          >
+          <svg class="footer-heart" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path
               fill="currentColor"
               d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z"
