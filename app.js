@@ -10,11 +10,11 @@
 //   - Anti-scrape phone (char codes) + email (data-* rebuild).
 //   - QR popover (collision-aware flip).
 //   - Copy buttons (the /crypto page).
-//   - Signature (home): selecting a mosaic cell floods it (and the
-//     stage) with its brand color from the click origin (clip-path
-//     discs), prints the big kinetic numeral and surfaces the brand
-//     moment. The flood auto-reverts to the initial neutral state
-//     after 15s of no interaction.
+//   - Signature (home): selecting a mosaic cell floods the global stage
+//     with its brand color from the click origin, prints the big kinetic
+//     numeral and surfaces the cell's moment (slogan + preview line) in
+//     place — the cell interior stays legible (no in-cell flood). It
+//     auto-reverts to the initial neutral state after 10s of no interaction.
 //   - Kinetic intro that settles into the slim resting overture.
 // =========================================================
 const STORAGE_KEYS = { theme: "parlox.theme", lang: "parlox.lang" };
@@ -23,7 +23,7 @@ const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 // The active selection reverts to the on-load neutral state after
 // this idle window; any card press resets the countdown.
-const FLOOD_REVERT_MS = 15000;
+const FLOOD_REVERT_MS = 10000;
 
 // ---------- i18n ----------
 const dict = {
@@ -51,6 +51,13 @@ const dict = {
     "slogan.edu": "Nivelación y asesoría educativa.",
     "slogan.found": "Por una educación libre y saludable.",
     "slogan.min": "Una familia que glorifica a Dios.",
+    "desc.tech":
+      "Estudio de tecnología que diseña y opera productos digitales propios.",
+    "desc.theo":
+      "Conversaciones de teología y Biblia en lenguaje cercano, sin academicismos.",
+    "desc.edu": "Academia de nivelación y acompañamiento para estudiantes.",
+    "desc.found": "Iniciativa por una educación accesible, libre y saludable.",
+    "desc.min": "Comunidad de fe local: una familia que camina junta.",
     "status.activo": "activo",
     "status.proximo": "próximo",
     "link.soon": "próximamente",
@@ -95,6 +102,12 @@ const dict = {
     "slogan.edu": "Tutoring and educational guidance.",
     "slogan.found": "For a free and healthy education.",
     "slogan.min": "A family that glorifies God.",
+    "desc.tech":
+      "A technology studio that builds and runs its own digital products.",
+    "desc.theo": "Down-to-earth conversations about theology and the Bible.",
+    "desc.edu": "An academy for tutoring and student support.",
+    "desc.found": "An initiative for accessible, free and healthy education.",
+    "desc.min": "A local faith community — a family walking together.",
     "status.activo": "active",
     "status.proximo": "upcoming",
     "link.soon": "coming soon",
@@ -121,11 +134,11 @@ const dict = {
 
 // Per-front data model (links + label rendered into the cell moment).
 const FRONTS = {
-  tech:  { area: "area.tech",  brand: "Parlox Network",     slogan: "slogan.tech",  href: "https://parlox.net",           label: "parlox.net",            external: true,  glyph: "tech" },
-  theo:  { area: "area.theo",  brand: "Cafecito Teológico", slogan: "slogan.theo",  href: "https://cafecito.cc",          label: "cafecito.cc",           external: true,  glyph: "theo" },
-  edu:   { area: "area.edu",   brand: "Cedesco Academia",   slogan: "slogan.edu",   href: "#",                            label: "@cedes",                external: false, glyph: "edu" },
-  found: { area: "area.found", brand: "Educalisa",          slogan: "slogan.found", href: "#",                            label: "link.soon",             external: false, glyph: "found" },
-  min:   { area: "area.min",   brand: "Alianza República",  slogan: "slogan.min",   href: "https://alianzarepublica.org", label: "alianzarepublica.org",  external: true,  glyph: "min" },
+  tech:  { area: "area.tech",  brand: "Parlox Network",     slogan: "slogan.tech",  desc: "desc.tech",  href: "https://parlox.net",           label: "parlox.net",            external: true,  glyph: "tech" },
+  theo:  { area: "area.theo",  brand: "Cafecito Teológico", slogan: "slogan.theo",  desc: "desc.theo",  href: "https://cafecito.cc",          label: "cafecito.cc",           external: true,  glyph: "theo" },
+  edu:   { area: "area.edu",   brand: "Cedesco Academia",   slogan: "slogan.edu",   desc: "desc.edu",   href: "#",                            label: "@cedes",                external: false, glyph: "edu" },
+  found: { area: "area.found", brand: "Educalisa",          slogan: "slogan.found", desc: "desc.found", href: "#",                            label: "link.soon",             external: false, glyph: "found" },
+  min:   { area: "area.min",   brand: "Alianza República",  slogan: "slogan.min",   desc: "desc.min",   href: "https://alianzarepublica.org", label: "alianzarepublica.org",  external: true,  glyph: "min" },
 };
 
 // Brand motif glyphs (the tech motif is the reserved square logo
@@ -376,9 +389,11 @@ function fillCellMoment(cell) {
     glyphHost.dataset.filled = "1";
   }
   const slogan = cell.querySelector(".cell-slogan");
+  const desc = cell.querySelector(".cell-desc");
   const link = cell.querySelector(".cell-link");
   const linkLabel = cell.querySelector(".cell-link-label");
   if (slogan) slogan.textContent = t(f.slogan);
+  if (desc) desc.textContent = t(f.desc);
   if (linkLabel) linkLabel.textContent = t(f.label);
   if (link) {
     link.setAttribute("href", f.href);
@@ -418,13 +433,6 @@ function selectFront(cell, origin) {
   });
 
   if (state.front) {
-    // In-cell flood: origin at the click point, relative to the cell.
-    const r = cell.getBoundingClientRect();
-    const cx = origin ? ((origin.x - r.left) / r.width) * 100 : 50;
-    const cy = origin ? ((origin.y - r.top) / r.height) * 100 : 50;
-    cell.style.setProperty("--cx", `${cx}%`);
-    cell.style.setProperty("--cy", `${cy}%`);
-
     // Global stage flood: origin at the click point in viewport coords.
     if (origin) {
       document.body.style.setProperty("--flood-x", `${origin.x}px`);
